@@ -1,0 +1,60 @@
+# Time — When
+id: "fabric:primitive:time"
+name: "Time"
+version: "1.0.0"
+layer: "foundation"
+question: "When does it occur or apply?"
+extends: ["fabric:primitive:thing"]
+description: >
+  The temporal primitive: instants, intervals, durations, recurrences, and
+  validity windows. Time underpins Events, temporal Constraints, State
+  transitions, and the auditability of everything that happens.
+schemaOrg:
+  type: "schema:DateTime"
+  url: "https://schema.org/DateTime"
+  note: >
+    Intervals map to schema:startDate/schema:endDate; durations to schema:Duration
+    (ISO 8601); recurrences to schema:Schedule.
+jsonldContext:
+  time: "http://www.w3.org/2006/time#"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: kind
+    type: enum
+    required: true
+    description: "instant | interval | duration | recurrence | window"
+  - name: instant
+    type: datetime
+    required: false
+    schemaOrg: "schema:DateTime"
+  - name: start
+    type: datetime
+    required: false
+    schemaOrg: "schema:startDate"
+  - name: end
+    type: datetime
+    required: false
+    schemaOrg: "schema:endDate"
+  - name: duration
+    type: iso8601-duration
+    required: false
+    schemaOrg: "schema:Duration"
+  - name: timezone
+    type: string
+    required: false
+    description: "IANA timezone, e.g. UTC, Europe/London."
+relationships:
+  - name: scopes
+    target: "fabric:primitive:constraint"
+    cardinality: "0..*"
+    description: "Temporal constraints expressed over this time."
+invariants:
+  - "For an interval, start <= end."
+  - "All stored instants are timezone-aware (default UTC)."
+examples:
+  - id: "time:window:2026-q2"
+    kind: "interval"
+    start: "2026-04-01T00:00:00Z"
+    end: "2026-06-30T23:59:59Z"

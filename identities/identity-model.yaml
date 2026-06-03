@@ -1,0 +1,63 @@
+# Identity — Who or What
+id: "fabric:primitive:identity"
+name: "Identity"
+version: "1.0.0"
+layer: "foundation"
+question: "Who or what is it?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A distinguishable, addressable subject: a person, organization, agent,
+  service, device, or dataset. Identity anchors authentication, attribution,
+  ownership, and the holding of Capabilities. Aligns with DID/VC concepts
+  layered on top of schema.org agent types.
+schemaOrg:
+  type: "schema:Thing"
+  url: "https://schema.org/Thing"
+  note: >
+    Specializes to schema:Person, schema:Organization, or schema:SoftwareApplication
+    depending on the subject kind. Decentralized identifiers (DIDs) extend the
+    schema:identifier concept.
+jsonldContext:
+  identity: "fabric:Identity"
+  did: "https://www.w3.org/ns/did#"
+attributes:
+  - name: id
+    type: string
+    required: true
+    schemaOrg: "schema:identifier"
+    description: "Canonical identifier, often a DID."
+  - name: kind
+    type: enum
+    required: true
+    description: "person | organization | agent | service | device | dataset"
+  - name: displayName
+    type: string
+    required: false
+    schemaOrg: "schema:name"
+  - name: controller
+    type: ref
+    required: false
+    description: "Identity that controls this identity (delegation/custody)."
+  - name: credentials
+    type: list<ref>
+    required: false
+    description: "Verifiable credentials asserted about this identity."
+relationships:
+  - name: holds
+    target: "fabric:primitive:capability"
+    cardinality: "0..*"
+    description: "Capabilities this identity can exercise."
+  - name: subjectTo
+    target: "fabric:primitive:policy"
+    cardinality: "0..*"
+    description: "Policies governing this identity."
+  - name: locatedAt
+    target: "fabric:primitive:location"
+    cardinality: "0..*"
+invariants:
+  - "An Identity is globally resolvable via its id."
+  - "Capabilities are exercised by an Identity, never anonymously."
+examples:
+  - id: "did:fabric:org:opendataworld"
+    kind: "organization"
+    displayName: "OpenDataWorld"

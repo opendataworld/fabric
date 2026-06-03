@@ -1,0 +1,83 @@
+# Objective — Why (the missing "why" layer)
+id: "fabric:primitive:objective"
+name: "Objective"
+version: "1.0.0"
+layer: "foundation"
+question: "Why are we doing it, and how is success judged?"
+extends: ["fabric:primitive:thing"]
+description: >
+  The intent primitive. Capability says what can be done; Objective says what
+  should be achieved and how success is measured. Objective is the anchor for
+  Goals, KPIs, Outcomes, Strategies, Plans, Projects, Roadmaps, agent
+  objectives, and decision intelligence. Capabilities serve Objectives;
+  Constraints bound them; Events provide evidence of progress.
+schemaOrg:
+  type: "schema:Thing"
+  url: "https://schema.org/Thing"
+  note: >
+    schema.org has no native goal/objective type. Fabric defines Objective as a
+    measurable intent with target outcomes, related to schema:Action via the
+    schema:result it seeks to bring about.
+jsonldContext:
+  objective: "fabric:Objective"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: name
+    type: string
+    required: true
+    schemaOrg: "schema:name"
+  - name: kind
+    type: enum
+    required: true
+    description: "goal | outcome | kpi | strategy | okr | agent-objective"
+  - name: statement
+    type: string
+    required: true
+    description: "What success looks like, in plain language."
+  - name: metrics
+    type: list<metric>
+    required: false
+    description: "Measurable indicators with targets, e.g. {name, target, unit}."
+  - name: targetDate
+    type: ref
+    required: false
+    description: "Time primitive for the objective horizon."
+  - name: priority
+    type: enum
+    required: false
+    description: "low | medium | high | critical"
+  - name: status
+    type: ref
+    required: false
+    description: "State primitive: not-started | in-progress | achieved | abandoned."
+relationships:
+  - name: servedBy
+    target: "fabric:primitive:capability"
+    cardinality: "0..*"
+    description: "Capabilities exercised to advance this objective."
+  - name: boundedBy
+    target: "fabric:primitive:constraint"
+    cardinality: "0..*"
+  - name: measuredBy
+    target: "fabric:primitive:event"
+    cardinality: "0..*"
+    description: "Events providing evidence of progress."
+  - name: subObjectiveOf
+    target: "fabric:primitive:objective"
+    cardinality: "0..1"
+    description: "Objective decomposition / OKR hierarchy."
+invariants:
+  - "An Objective declares at least one way success is judged (statement or metric)."
+  - "Progress is evidenced by Events, never asserted without record."
+examples:
+  - id: "objective:global-entity-coverage"
+    name: "Reach Global Entity Coverage"
+    kind: "okr"
+    statement: "Catalog 95% of canonical entities across priority domains."
+    metrics:
+      - name: "coverage"
+        target: 95
+        unit: "percent"
+    priority: "high"

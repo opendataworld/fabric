@@ -1,0 +1,60 @@
+# Event — What happened
+id: "fabric:primitive:event"
+name: "Event"
+version: "1.0.0"
+layer: "foundation"
+question: "What happened?"
+extends: ["fabric:primitive:thing"]
+description: >
+  An immutable record that something occurred at a point in Time, optionally at
+  a Location, involving one or more Identities. Events drive State transitions,
+  record Capability executions, and form the audit trail of the platform.
+schemaOrg:
+  type: "schema:Event"
+  url: "https://schema.org/Event"
+jsonldContext:
+  event: "fabric:Event"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: type
+    type: string
+    required: true
+    description: "Event type, e.g. capability.executed, state.transitioned, policy.evaluated."
+  - name: occurredAt
+    type: datetime
+    required: true
+    schemaOrg: "schema:startDate"
+  - name: actor
+    type: ref
+    required: false
+    description: "Identity that caused the event."
+  - name: subject
+    type: ref
+    required: false
+    description: "Thing the event is about."
+  - name: location
+    type: ref
+    required: false
+    schemaOrg: "schema:location"
+  - name: payload
+    type: map
+    required: false
+    description: "Event-specific data."
+relationships:
+  - name: records
+    target: "fabric:primitive:capability"
+    cardinality: "0..1"
+    description: "Capability execution this event captures."
+  - name: triggers
+    target: "fabric:primitive:state"
+    cardinality: "0..*"
+invariants:
+  - "Events are append-only and never mutated after creation."
+  - "occurredAt is always present and timezone-aware."
+examples:
+  - id: "event:capability.executed:8f12"
+    type: "capability.executed"
+    occurredAt: "2026-06-03T12:00:00Z"
+    actor: "did:fabric:agent:classifier"

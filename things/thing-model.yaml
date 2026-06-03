@@ -1,0 +1,60 @@
+# Thing — the universal root primitive
+#
+# Everything in Fabric is a Thing. Every other primitive extends it.
+id: "fabric:primitive:thing"
+name: "Thing"
+version: "1.0.0"
+layer: "foundation"
+question: "What is it?"
+description: >
+  The most general primitive. Anything that can be named, referenced,
+  governed, or related to anything else is a Thing. All other primitives
+  (Identity, Time, Location, Event, Capability, ...) are specializations
+  of Thing. This mirrors schema.org's root type of the same name.
+schemaOrg:
+  type: "schema:Thing"
+  url: "https://schema.org/Thing"
+jsonldContext:
+  "@vocab": "https://opendataworld.org/fabric/vocab#"
+  schema: "https://schema.org/"
+  fabric: "https://opendataworld.org/fabric/vocab#"
+attributes:
+  - name: id
+    type: string
+    required: true
+    schemaOrg: "schema:identifier"
+    description: "Canonical, stable identifier for this thing."
+  - name: type
+    type: string
+    required: true
+    schemaOrg: "@type"
+    description: "The primitive or domain type of this thing."
+  - name: name
+    type: string
+    required: false
+    schemaOrg: "schema:name"
+    description: "Human-readable label."
+  - name: description
+    type: string
+    required: false
+    schemaOrg: "schema:description"
+  - name: createdAt
+    type: datetime
+    required: false
+    schemaOrg: "schema:dateCreated"
+  - name: metadata
+    type: map
+    required: false
+    description: "Open key/value bag for domain-specific extension."
+relationships:
+  - name: relatedTo
+    target: "fabric:primitive:thing"
+    cardinality: "0..*"
+    description: "Generic association; specialized by the Relationship primitive."
+invariants:
+  - "Every Thing has a unique id within its namespace."
+  - "Every other primitive instance is also a Thing."
+examples:
+  - id: "thing:example:001"
+    type: "fabric:primitive:thing"
+    name: "An arbitrary referenceable entity"

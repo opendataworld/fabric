@@ -1,0 +1,85 @@
+# Fabric Foundation Primitive — Meta Schema
+#
+# Every root primitive in the Fabric foundation layer conforms to this shape.
+# It is the schema-of-schemas: the canonical contract that makes the primitive
+# models composable, governable, and machine-readable.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://opendataworld.org/fabric/meta/primitive-schema/v1"
+title: "Fabric Foundation Primitive"
+description: >
+  Defines the structure shared by every foundation primitive model
+  (Thing, Identity, Time, Location, Relationship, State, Event,
+  Capability, Constraint, Policy, Objective, ...).
+type: object
+required:
+  - id
+  - name
+  - version
+  - layer
+  - question
+  - description
+  - schemaOrg
+  - attributes
+properties:
+  id:
+    type: string
+    pattern: "^fabric:primitive:[a-z][a-z0-9-]*$"
+    description: "Canonical primitive identifier, e.g. fabric:primitive:identity."
+  name:
+    type: string
+    description: "Human-readable primitive name."
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    description: "Semantic version of this primitive model."
+  layer:
+    type: string
+    enum: ["foundation"]
+    description: "All root primitives live in the foundation layer."
+  question:
+    type: string
+    description: "The single question this primitive answers (Who, When, Where, Why, ...)."
+  extends:
+    type: array
+    items: { type: string }
+    description: "Primitive ids this one specializes (almost always fabric:primitive:thing)."
+  description:
+    type: string
+  schemaOrg:
+    type: object
+    required: ["type"]
+    properties:
+      type: { type: string, description: "Closest schema.org type, prefixed schema:." }
+      url: { type: string, format: uri }
+      note: { type: string, description: "How the mapping diverges from schema.org." }
+  jsonldContext:
+    type: object
+    description: "JSON-LD @context fragment contributed by this primitive."
+  attributes:
+    type: array
+    items:
+      type: object
+      required: ["name", "type"]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        required: { type: boolean, default: false }
+        schemaOrg: { type: string }
+        description: { type: string }
+  relationships:
+    type: array
+    items:
+      type: object
+      required: ["name", "target"]
+      properties:
+        name: { type: string }
+        target: { type: string, description: "Target primitive id." }
+        cardinality: { type: string, enum: ["1", "0..1", "1..*", "0..*"] }
+        description: { type: string }
+  invariants:
+    type: array
+    items: { type: string }
+    description: "Statements that must always hold true for instances."
+  examples:
+    type: array
+    items: { type: object }

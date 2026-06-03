@@ -1,0 +1,60 @@
+# Relationship — How things are connected
+id: "fabric:primitive:relationship"
+name: "Relationship"
+version: "1.0.0"
+layer: "foundation"
+question: "How are things connected?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A typed, directed (optionally qualified) edge between two Things. The
+  Relationship primitive turns the catalog of things into a knowledge graph:
+  ownership, membership, dependency, derivation, delegation, and more.
+schemaOrg:
+  type: "schema:Role"
+  url: "https://schema.org/Role"
+  note: >
+    schema.org expresses relationships as typed properties or via schema:Role
+    for qualified/temporal links. Fabric reifies the edge so it can itself be
+    governed, timestamped, and given evidence.
+jsonldContext:
+  rel: "fabric:Relationship"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: predicate
+    type: string
+    required: true
+    description: "The relationship type, e.g. owns, partOf, dependsOn, derivedFrom."
+  - name: source
+    type: ref
+    required: true
+    description: "Subject Thing (edge tail)."
+  - name: target
+    type: ref
+    required: true
+    description: "Object Thing (edge head)."
+  - name: directed
+    type: boolean
+    required: false
+    description: "Whether the edge is directional (default true)."
+  - name: validDuring
+    type: ref
+    required: false
+    description: "Time primitive bounding when the relationship holds."
+  - name: weight
+    type: number
+    required: false
+    description: "Optional strength/confidence of the relationship."
+relationships:
+  - name: connects
+    target: "fabric:primitive:thing"
+    cardinality: "1..*"
+invariants:
+  - "source and target both resolve to existing Things."
+  - "predicate is drawn from a governed relationship vocabulary."
+examples:
+  - id: "rel:owns:001"
+    predicate: "owns"
+    source: "did:fabric:org:opendataworld"
+    target: "dataset:global-entities"

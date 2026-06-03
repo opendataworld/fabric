@@ -1,0 +1,64 @@
+# Constraint — What is limited (deeper than Policy)
+id: "fabric:primitive:constraint"
+name: "Constraint"
+version: "1.0.0"
+layer: "foundation"
+question: "What must hold or is forbidden?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A single, evaluable condition that limits what is permitted. Constraint is
+  more fundamental than Policy: a Policy is a collection of Constraints, a
+  Control is an enforceable Constraint, Validation is the evaluation of a
+  Constraint, and Eligibility, Approval Gates, Boundaries, Budgets, and Rate
+  Limits are all specializations of Constraint.
+schemaOrg:
+  type: "schema:PropertyValueSpecification"
+  url: "https://schema.org/PropertyValueSpecification"
+  note: >
+    schema.org expresses value restrictions via PropertyValueSpecification
+    (min/max/required/pattern). Fabric generalizes this into a typed, composable,
+    independently governed Constraint primitive.
+jsonldContext:
+  constraint: "fabric:Constraint"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: kind
+    type: enum
+    required: true
+    description: "value | temporal | spatial | resource | rate | eligibility | approval | safety"
+  - name: expression
+    type: string
+    required: true
+    description: "Declarative predicate over a target, e.g. 'amount <= budget.remaining'."
+  - name: target
+    type: ref
+    required: false
+    description: "The Thing/attribute the constraint is evaluated against."
+  - name: severity
+    type: enum
+    required: false
+    description: "advisory | enforced | blocking"
+  - name: onViolation
+    type: string
+    required: false
+    description: "Action when violated, e.g. deny, warn, require-approval, throttle."
+relationships:
+  - name: composesInto
+    target: "fabric:primitive:policy"
+    cardinality: "0..*"
+    description: "Policies that bundle this constraint."
+  - name: limits
+    target: "fabric:primitive:capability"
+    cardinality: "0..*"
+invariants:
+  - "A Constraint evaluates to a boolean given a context."
+  - "A Policy is exactly a set of Constraints plus combination logic."
+  - "Constraint is evaluable independently of any Policy."
+examples:
+  - id: "constraint:budget:monthly"
+    kind: "resource"
+    expression: "spend.month <= budget.monthly"
+    severity: "blocking"
+    onViolation: "deny"

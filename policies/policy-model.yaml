@@ -1,0 +1,75 @@
+# Policy — What is allowed
+id: "fabric:primitive:policy"
+name: "Policy"
+version: "1.0.0"
+layer: "foundation"
+question: "What is allowed, and under what conditions?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A governed bundle of Constraints plus combination logic that decides whether
+  an action is permitted. Policy is where Constraints become enforceable
+  governance: access control, data handling, approval workflows, safety rules.
+  Because a Policy is composed of Constraints, the Constraint primitive is the
+  deeper one; Policy adds authorship, scope, precedence, and enforcement.
+schemaOrg:
+  type: "schema:DigitalDocument"
+  url: "https://schema.org/DigitalDocument"
+  note: >
+    schema.org has no governance-policy type; the closest practical anchor is a
+    DigitalDocument expressing rules. Fabric treats Policy as executable,
+    versioned governance composed of Constraints.
+jsonldContext:
+  policy: "fabric:Policy"
+  odrl: "http://www.w3.org/ns/odrl/2/"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: name
+    type: string
+    required: true
+    schemaOrg: "schema:name"
+  - name: effect
+    type: enum
+    required: true
+    description: "permit | deny | require-approval"
+  - name: combine
+    type: enum
+    required: false
+    description: "How member constraints combine: all | any | weighted"
+  - name: constraints
+    type: list<ref>
+    required: true
+    description: "The Constraints this policy is composed of."
+  - name: scope
+    type: map
+    required: false
+    description: "What the policy applies to (identities, capabilities, resources)."
+  - name: precedence
+    type: integer
+    required: false
+    description: "Higher precedence wins on conflict."
+  - name: owner
+    type: ref
+    required: false
+    description: "Identity accountable for the policy."
+relationships:
+  - name: composedOf
+    target: "fabric:primitive:constraint"
+    cardinality: "1..*"
+  - name: governs
+    target: "fabric:primitive:capability"
+    cardinality: "0..*"
+  - name: appliesTo
+    target: "fabric:primitive:identity"
+    cardinality: "0..*"
+invariants:
+  - "A Policy contains at least one Constraint."
+  - "Every Policy decision is recorded as a policy.evaluated Event."
+  - "On conflict, the higher-precedence Policy applies."
+examples:
+  - id: "policy:dataset-publish"
+    name: "Dataset Publication Policy"
+    effect: "require-approval"
+    combine: "all"
+    constraints: ["constraint:budget:monthly", "constraint:approval:steward"]

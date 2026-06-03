@@ -1,0 +1,60 @@
+# Location — Where
+id: "fabric:primitive:location"
+name: "Location"
+version: "1.0.0"
+layer: "foundation"
+question: "Where is it?"
+extends: ["fabric:primitive:thing"]
+description: >
+  The spatial primitive: physical places, geo-coordinates, regions, logical
+  addresses, and digital locations (URLs, network endpoints, data residency
+  zones). Location grounds boundary Constraints and data-governance rules.
+schemaOrg:
+  type: "schema:Place"
+  url: "https://schema.org/Place"
+  note: >
+    Coordinates map to schema:GeoCoordinates; regions to schema:GeoShape;
+    postal addresses to schema:PostalAddress. Digital locations extend with
+    schema:url and network endpoint concepts.
+jsonldContext:
+  geo: "http://www.opengis.net/ont/geosparql#"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: kind
+    type: enum
+    required: true
+    description: "place | coordinates | region | address | digital | residency-zone"
+  - name: latitude
+    type: number
+    required: false
+    schemaOrg: "schema:latitude"
+  - name: longitude
+    type: number
+    required: false
+    schemaOrg: "schema:longitude"
+  - name: geometry
+    type: geojson
+    required: false
+    schemaOrg: "schema:GeoShape"
+  - name: address
+    type: string
+    required: false
+    schemaOrg: "schema:address"
+  - name: uri
+    type: uri
+    required: false
+    schemaOrg: "schema:url"
+    description: "Digital location / endpoint."
+relationships:
+  - name: bounds
+    target: "fabric:primitive:constraint"
+    cardinality: "0..*"
+    description: "Boundary constraints defined over this location."
+invariants:
+  - "If kind=coordinates, latitude in [-90,90] and longitude in [-180,180]."
+examples:
+  - id: "location:zone:eu-data-residency"
+    kind: "residency-zone"
+    description: "European Union data residency boundary"

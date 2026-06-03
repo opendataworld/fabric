@@ -1,0 +1,61 @@
+# State — Current condition
+id: "fabric:primitive:state"
+name: "State"
+version: "1.0.0"
+layer: "foundation"
+question: "What condition is it in now?"
+extends: ["fabric:primitive:thing"]
+description: >
+  The current (or historical) condition of a Thing within a defined lifecycle.
+  State reflects Capability availability, governs allowable transitions, and is
+  advanced by Events. A sequence of States over Time forms a Journey.
+schemaOrg:
+  type: "schema:ActionStatusType"
+  url: "https://schema.org/ActionStatusType"
+  note: >
+    Loosely aligns with schema:status / schema:ActionStatusType. Fabric
+    generalizes status into a first-class, transition-governed lifecycle.
+jsonldContext:
+  state: "fabric:State"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: subject
+    type: ref
+    required: true
+    description: "The Thing whose state this describes."
+  - name: value
+    type: string
+    required: true
+    description: "Current state value, e.g. draft, active, suspended, retired."
+  - name: lifecycle
+    type: string
+    required: false
+    description: "Named state machine this value belongs to."
+  - name: since
+    type: datetime
+    required: false
+    schemaOrg: "schema:dateModified"
+  - name: allowedTransitions
+    type: list<string>
+    required: false
+    description: "States reachable from this value."
+relationships:
+  - name: advancedBy
+    target: "fabric:primitive:event"
+    cardinality: "0..*"
+    description: "Events that cause transitions."
+  - name: gatedBy
+    target: "fabric:primitive:constraint"
+    cardinality: "0..*"
+    description: "Constraints that must hold for a transition."
+invariants:
+  - "A transition target must appear in the prior state's allowedTransitions."
+  - "Exactly one current State value per (subject, lifecycle)."
+examples:
+  - id: "state:dataset:global-entities"
+    subject: "dataset:global-entities"
+    value: "active"
+    lifecycle: "dataset-lifecycle"
+    allowedTransitions: ["suspended", "retired"]

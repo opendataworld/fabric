@@ -1,0 +1,76 @@
+# Capability — What can be done
+id: "fabric:primitive:capability"
+name: "Capability"
+version: "1.0.0"
+layer: "foundation"
+question: "What can this thing do?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A unit of "can do": what an Identity (person, agent, service, organization,
+  product, or system) is able to perform, under Policy, given context, tools,
+  resources, and evidence. Capabilities are held by Identities, packaged by
+  Products, composed by Solutions, constrained by Policy, and recorded by Events.
+schemaOrg:
+  type: "schema:Action"
+  url: "https://schema.org/Action"
+  note: >
+    schema.org has no native "capability" type. Fabric models a Capability as a
+    potential Action: a parameterized, governable ability that, when exercised,
+    produces an Event of type capability.executed.
+jsonldContext:
+  capability: "fabric:Capability"
+attributes:
+  - name: id
+    type: string
+    required: true
+  - name: name
+    type: string
+    required: true
+    schemaOrg: "schema:name"
+  - name: verb
+    type: string
+    required: true
+    description: "The core action, e.g. classify, publish, approve, query, ingest."
+  - name: inputs
+    type: list<param>
+    required: false
+    description: "Required inputs/parameters to exercise the capability."
+  - name: outputs
+    type: list<param>
+    required: false
+  - name: requiresTools
+    type: list<ref>
+    required: false
+    description: "Tools or services needed to perform the capability."
+  - name: requiresResources
+    type: list<ref>
+    required: false
+    description: "Resources (compute, budget, data) consumed."
+  - name: maturity
+    type: enum
+    required: false
+    description: "experimental | supported | deprecated"
+relationships:
+  - name: heldBy
+    target: "fabric:primitive:identity"
+    cardinality: "0..*"
+  - name: constrainedBy
+    target: "fabric:primitive:constraint"
+    cardinality: "0..*"
+    description: "Constraints limiting how/when the capability may be exercised."
+  - name: governedBy
+    target: "fabric:primitive:policy"
+    cardinality: "0..*"
+  - name: servesObjective
+    target: "fabric:primitive:objective"
+    cardinality: "0..*"
+    description: "Objectives this capability advances."
+invariants:
+  - "A Capability is always exercised by exactly one Identity."
+  - "Exercising a Capability emits a capability.executed Event."
+  - "Capability availability reflects the holder's current State."
+examples:
+  - id: "capability:classify-dataset"
+    name: "Classify Dataset"
+    verb: "classify"
+    maturity: "supported"
