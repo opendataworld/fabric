@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabric Graph</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Cytoscape.js — interactive graph visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+  <style>
+    #cy { width: 100%; height: calc(100vh - 132px); background: var(--bg); }
+    .graph-bar { display: flex; align-items: center; gap: 14px; padding: 12px 24px;
+      border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .graph-bar .stat { color: var(--muted); font-size: .9rem; }
+    .graph-bar .stat b { color: var(--brand-2); }
+    .graph-bar input { padding: 8px 12px; border-radius: 8px; background: var(--surface);
+      border: 1px solid var(--border); color: var(--text); font: inherit; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>
+      <span>Fabric<small>Graph</small></span></a>
+    <nav class="nav-links"><a href="catalog/index.html">Catalog</a>
+      <a href="chat.html">Chat</a></nav>
+  </header>
+
+  <div class="graph-bar">
+    <span class="stat" id="stat">Loading graph…</span>
+    <input id="filter" placeholder="Highlight node (e.g. identity)" autocomplete="off" />
+    <button class="btn btn-ghost" id="relayout">Re-layout</button>
+  </div>
+  <div id="cy"></div>
+
+  <script>
+    const API_BASE = window.FABRIC_API_BASE || "http://localhost:8088";
+    const statEl = document.getElementById("stat");
+    let cy;
+
+    async function load() {
+      let data;
+      try {
+        const r = await fetch(API_BASE + "/graph");
+        if (!r.ok) throw new Error(r.statusText);
+        data = await r.json();
+      } catch (e) {
+        statEl.textContent = "⚠️ Could not reach Fabric API at " + API_BASE + " — is it running?";
+        return;
+      }
+      statEl.innerHTML = "Fabric graph · <b>" + data.nodes.length + "</b> nodes · <b>" + data.edges.length + "</b> edges";
+
+      const elements = [
+        ...data.nodes.map(n => ({ data: { id: n.id, label: n.name } })),
+        ...data.edges.map((e, i) => ({ data: { id: "e" + i, source: e.from, target: e.to, label: e.rel } })),
+      ];
+
+      cy = cytoscape({
+        container: document.getElementById("cy"),
+        elements,
+        style: [
+          { selector: "node", style: {
+              "background-color": "#5b8cff", "label": "data(label)", "color": "#e6e9ef",
+              "font-size": "10px", "text-valign": "center", "text-halign": "center",
+              "text-outline-color": "#0b0e14", "text-outline-width": 2, "width": 30, "height": 30 } },
+          { selector: "edge", style: {
+              "width": 1, "line-color": "#232a39", "target-arrow-color": "#232a39",
+              "target-arrow-shape": "triangle", "curve-style": "bezier",
+              "label": "data(label)", "font-size": "7px", "color": "#9aa4b8",
+              "text-rotation": "autorotate" } },
+          { selector: ".hi", style: { "background-color": "#28d8b0", "width": 44, "height": 44, "z-index": 99 } },
+          { selector: ".dim", style: { "opacity": 0.15 } },
+        ],
+        layout: { name: "cose", animate: true, nodeRepulsion: 9000, idealEdgeLength: 90 },
+      });
+
+      cy.on("tap", "node", evt => {
+        const n = evt.target;
+        cy.elements().addClass("dim");
+        n.removeClass("dim").addClass("hi");
+        n.neighborhood().removeClass("dim");
+      });
+      cy.on("tap", evt => { if (evt.target === cy) cy.elements().removeClass("dim hi"); });
+    }
+
+    document.getElementById("filter").addEventListener("input", e => {
+      if (!cy) return;
+      const q = e.target.value.trim().toLowerCase();
+      cy.elements().removeClass("dim hi");
+      if (!q) return;
+      const match = cy.nodes().filter(n => n.id().toLowerCase().includes(q) || n.data("label").toLowerCase().includes(q));
+      if (match.length) { cy.elements().addClass("dim"); match.removeClass("dim").addClass("hi"); match.neighborhood().removeClass("dim"); }
+    });
+    document.getElementById("relayout").addEventListener("click", () => {
+      if (cy) cy.layout({ name: "cose", animate: true, nodeRepulsion: 9000, idealEdgeLength: 90 }).run();
+    });
+    load();
+  </script>
+</body>
+</html>
