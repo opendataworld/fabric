@@ -1,0 +1,18 @@
+# Application — a registered client/app (OAuth/OIDC)
+# Generalizes Keycloak Client and Casdoor Application.
+id: "fabric:primitive:application"
+name: "Application"
+version: "1.0.0"
+layer: "domain"
+question: "What registered app authenticates here?"
+extends: ["fabric:primitive:thing"]
+description: "A registered OAuth/OIDC client application that authenticates Identities."
+schemaOrg: { type: "schema:SoftwareApplication", url: "https://schema.org/SoftwareApplication" }
+attributes:
+  - { name: id, type: string, required: true }
+  - { name: name, type: string, required: true }
+  - { name: clientId, type: string, required: false }
+relationships:
+  - { name: authenticates, target: "fabric:primitive:account", cardinality: "0..*" }
+  - { name: registeredIn, target: "fabric:primitive:tenant", cardinality: "0..1" }
+  - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*" }

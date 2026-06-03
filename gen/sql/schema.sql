@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS agent (
     name TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS application (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    clientId TEXT
+);
+
 CREATE TABLE IF NOT EXISTS capability (
     id TEXT PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
@@ -106,6 +112,11 @@ CREATE TABLE IF NOT EXISTS field_group (
     fields JSONB
 );
 
+CREATE TABLE IF NOT EXISTS group (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS identity (
     id TEXT PRIMARY KEY NOT NULL,
     kind TEXT NOT NULL,
@@ -150,6 +161,12 @@ CREATE TABLE IF NOT EXISTS objective (
     targetDate TEXT,
     priority TEXT,
     status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS permission (
+    id TEXT PRIMARY KEY NOT NULL,
+    action TEXT NOT NULL,
+    effect TEXT
 );
 
 CREATE TABLE IF NOT EXISTS pipeline (
@@ -202,6 +219,11 @@ CREATE TABLE IF NOT EXISTS risk (
     impact TEXT,
     severity TEXT,
     status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS role (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS schema (

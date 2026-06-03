@@ -1,0 +1,17 @@
+# Group — a collection of identities
+# Generalizes Keycloak Group and Casdoor Group.
+id: "fabric:primitive:group"
+name: "Group"
+version: "1.0.0"
+layer: "domain"
+question: "Which identities are grouped together?"
+extends: ["fabric:primitive:thing"]
+description: "A collection of Identities that can be granted Roles collectively."
+schemaOrg: { type: "schema:Organization", url: "https://schema.org/Organization" }
+attributes:
+  - { name: id, type: string, required: true }
+  - { name: name, type: string, required: true }
+relationships:
+  - { name: contains, target: "fabric:primitive:identity", cardinality: "0..*" }
+  - { name: hasRole, target: "fabric:primitive:role", cardinality: "0..*" }
+  - { name: withinTenant, target: "fabric:primitive:tenant", cardinality: "0..1" }

@@ -1,0 +1,16 @@
+# Role — a named bundle of permissions (RBAC)
+# Generalizes Keycloak Role and Casdoor Role.
+id: "fabric:primitive:role"
+name: "Role"
+version: "1.0.0"
+layer: "domain"
+question: "What set of permissions is granted?"
+extends: ["fabric:primitive:thing"]
+description: "A named collection of Permissions assignable to Identities/Groups (RBAC)."
+schemaOrg: { type: "schema:Role", url: "https://schema.org/Role" }
+attributes:
+  - { name: id, type: string, required: true }
+  - { name: name, type: string, required: true }
+relationships:
+  - { name: grants, target: "fabric:primitive:permission", cardinality: "0..*" }
+  - { name: assignedTo, target: "fabric:primitive:identity", cardinality: "0..*" }

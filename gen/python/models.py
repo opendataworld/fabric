@@ -24,6 +24,14 @@ class Agent:
 
 
 @dataclass
+class Application:
+    """What registered app authenticates here?  (fabric:primitive:application)"""
+    id: str
+    name: str
+    clientId: Optional[str] = None
+
+
+@dataclass
 class Capability:
     """What can this thing do?  (fabric:primitive:capability)"""
     id: str
@@ -143,6 +151,13 @@ class FieldGroup:
 
 
 @dataclass
+class Group:
+    """Which identities are grouped together?  (fabric:primitive:group)"""
+    id: str
+    name: str
+
+
+@dataclass
 class Identity:
     """Who or what is it?  (fabric:primitive:identity)"""
     id: str
@@ -198,6 +213,14 @@ class Objective:
     targetDate: Optional[str] = None
     priority: Optional[str] = None
     status: Optional[str] = None
+
+
+@dataclass
+class Permission:
+    """What action is allowed on what?  (fabric:primitive:permission)"""
+    id: str
+    action: str
+    effect: Optional[str] = None
 
 
 @dataclass
@@ -262,6 +285,13 @@ class Risk:
     impact: Optional[str] = None
     severity: Optional[str] = None
     status: Optional[str] = None
+
+
+@dataclass
+class Role:
+    """What set of permissions is granted?  (fabric:primitive:role)"""
+    id: str
+    name: str
 
 
 @dataclass

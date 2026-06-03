@@ -7,6 +7,9 @@ graph LR
   Agent -->|pursues| Objective
   Agent -->|governedBy| Policy
   Agent -->|hasMemory| Event
+  Application -->|authenticates| Account
+  Application -->|registeredIn| Tenant
+  Application -->|governedBy| Policy
   Capability -->|heldBy| Identity
   Capability -->|constrainedBy| Constraint
   Capability -->|governedBy| Policy
@@ -41,6 +44,9 @@ graph LR
   Feature -->|hasState| State
   FieldGroup -->|usesDataType| DataType
   FieldGroup -->|composedInto| Schema
+  Group -->|contains| Identity
+  Group -->|hasRole| Role
+  Group -->|withinTenant| Tenant
   Identity -->|holds| Capability
   Identity -->|subjectTo| Policy
   Identity -->|locatedAt| Location
@@ -55,6 +61,9 @@ graph LR
   Objective -->|boundedBy| Constraint
   Objective -->|measuredBy| Event
   Objective -->|subObjectiveOf| Objective
+  Permission -->|permits| Capability
+  Permission -->|over| Resource
+  Permission -->|composesInto| Policy
   Pipeline -->|from| Source
   Pipeline -->|produces| Dataset
   Pipeline -->|emits| Event
@@ -73,6 +82,8 @@ graph LR
   Risk -->|mitigatedBy| Constraint
   Risk -->|governedBy| Policy
   Risk -->|evidencedBy| Evidence
+  Role -->|grants| Permission
+  Role -->|assignedTo| Identity
   Schema -->|basedOnClass| Thing
   Schema -->|includesFieldGroup| FieldGroup
   Schema -->|governedBy| Policy

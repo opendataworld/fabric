@@ -1,0 +1,18 @@
+# Permission — an allowed action on a resource
+# Generalizes Casdoor Permission and Keycloak fine-grained authz.
+id: "fabric:primitive:permission"
+name: "Permission"
+version: "1.0.0"
+layer: "domain"
+question: "What action is allowed on what?"
+extends: ["fabric:primitive:constraint"]
+description: "An allow-rule binding an action (Capability) to a target Resource — the atom of RBAC/ABAC."
+schemaOrg: { type: "schema:Thing", url: "https://schema.org/Thing" }
+attributes:
+  - { name: id, type: string, required: true }
+  - { name: action, type: string, required: true }
+  - { name: effect, type: enum, required: false }
+relationships:
+  - { name: permits, target: "fabric:primitive:capability", cardinality: "0..*" }
+  - { name: over, target: "fabric:primitive:resource", cardinality: "0..*" }
+  - { name: composesInto, target: "fabric:primitive:policy", cardinality: "0..*" }

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opendataworld.org/fabric/schema/permission.json",
+  "title": "Permission",
+  "description": "An allow-rule binding an action (Capability) to a target Resource \u2014 the atom of RBAC/ABAC.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "effect": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "action"
+  ]
+}

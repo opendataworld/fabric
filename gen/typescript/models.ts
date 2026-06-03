@@ -15,6 +15,13 @@ export interface Agent {
   name: string;
 }
 
+/** What registered app authenticates here?  (fabric:primitive:application) */
+export interface Application {
+  id: string;
+  name: string;
+  clientId?: string;
+}
+
 /** What can this thing do?  (fabric:primitive:capability) */
 export interface Capability {
   id: string;
@@ -121,6 +128,12 @@ export interface FieldGroup {
   fields?: Record<string, unknown>[];
 }
 
+/** Which identities are grouped together?  (fabric:primitive:group) */
+export interface Group {
+  id: string;
+  name: string;
+}
+
 /** Who or what is it?  (fabric:primitive:identity) */
 export interface Identity {
   id: string;
@@ -171,6 +184,13 @@ export interface Objective {
   targetDate?: string;
   priority?: string;
   status?: string;
+}
+
+/** What action is allowed on what?  (fabric:primitive:permission) */
+export interface Permission {
+  id: string;
+  action: string;
+  effect?: string;
 }
 
 /** How does data move?  (fabric:primitive:pipeline) */
@@ -229,6 +249,12 @@ export interface Risk {
   impact?: string;
   severity?: string;
   status?: string;
+}
+
+/** What set of permissions is granted?  (fabric:primitive:role) */
+export interface Role {
+  id: string;
+  name: string;
 }
 
 /** How is this entity's structure composed?  (fabric:primitive:schema) */

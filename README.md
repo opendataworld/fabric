@@ -42,7 +42,10 @@ schema.org-aligned YAML model conforming to
 `Dataset` · `Product` · `Solution` · `Feature` · `Market` · `Connector` ·
 `Pipeline` · `Agent` · `Journey` · `Metric` · `Tenant` · `Consent` · `Control`.
 
-The model forms a clean graph — **35 nodes, 93 edges, 0 dangling** (verified by
+**IAM nodes** (generalizing Keycloak & Casdoor): `Role` · `Permission` ·
+`Group` · `Application`.
+
+The model forms a clean graph — **39 nodes, 104 edges, 0 dangling** (verified by
 `codegen/generate_models.py --target graph`).
 
 ## How the primitives compose
