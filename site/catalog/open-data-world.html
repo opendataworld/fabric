@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Data World — OpenDataWorld</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="catalog.css" />
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="../index.html"><span class="brand-mark"></span>
+      <span>OpenDataWorld<small>Product Catalog</small></span></a>
+    <nav class="nav-links"><a href="index.html">All products</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Contact</a></nav>
+  </header>
+  
+  <section class="hero hero-sm">
+    <div class="hero-inner">
+      <p class="eyebrow">Publishing &amp; Discovery</p>
+      <h1>Open Data World <span class="badge badge-planned">Planned</span></h1>
+      <p class="lede">The open data commons.</p>
+      <div class="hero-cta">
+        <a href="../index.html#contact" class="btn btn-primary">Talk to us</a>
+        <a href="index.html" class="btn btn-ghost">← All products</a>
+      </div>
+    </div>
+  </section>
+  <main class="section product-body">
+    <p class="product-desc">The public face of the platform — open, governed datasets anyone can discover and use.</p>
+    <div class="product-cols">
+      <div class="card"><h3>Highlights</h3><ul class="ticks"><li>Open dataset commons</li><li>schema.org-native</li><li>Discoverable by search engines</li></ul></div>
+      <div class="card"><h3>How it connects</h3><p>Publishes governed assets to the world.</p></div>
+    </div>
+  </main>
+  <footer class="footer"><p>© <span id="y"></span> OpenDataWorld · Product Catalog</p></footer>
+  <script>document.getElementById("y").textContent=new Date().getFullYear();</script>
+</body>
+</html>

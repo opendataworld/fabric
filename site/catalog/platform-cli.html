@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Platform CLI — OpenDataWorld</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="catalog.css" />
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="../index.html"><span class="brand-mark"></span>
+      <span>OpenDataWorld<small>Product Catalog</small></span></a>
+    <nav class="nav-links"><a href="index.html">All products</a>
+      <a href="../index.html#contact" class="btn btn-ghost">Contact</a></nav>
+  </header>
+  
+  <section class="hero hero-sm">
+    <div class="hero-inner">
+      <p class="eyebrow">Platform Engineering</p>
+      <h1>Platform CLI <span class="badge badge-planned">Planned</span></h1>
+      <p class="lede">Fabric from your terminal.</p>
+      <div class="hero-cta">
+        <a href="../index.html#contact" class="btn btn-primary">Talk to us</a>
+        <a href="index.html" class="btn btn-ghost">← All products</a>
+      </div>
+    </div>
+  </section>
+  <main class="section product-body">
+    <p class="product-desc">Manage and script the fabric from the command line.</p>
+    <div class="product-cols">
+      <div class="card"><h3>Highlights</h3><ul class="ticks"><li>Scriptable</li><li>CI/CD friendly</li><li>Local-first</li></ul></div>
+      <div class="card"><h3>How it connects</h3><p>Thin client over Platform API.</p></div>
+    </div>
+  </main>
+  <footer class="footer"><p>© <span id="y"></span> OpenDataWorld · Product Catalog</p></footer>
+  <script>document.getElementById("y").textContent=new Date().getFullYear();</script>
+</body>
+</html>
