@@ -99,6 +99,21 @@ def market_tag(slug):
     return f'<p class="market-tag">Gartner market · {esc(m)}</p>' if m else ""
 
 
+# Governed feature lifecycle (see meta/feature-lifecycle.yaml).
+LIFECYCLE = ["Planned", "In design", "Beta", "Available", "Deprecated"]
+
+
+def lifecycle_stepper(status):
+    """Render a pipeline stepper. Returns '' for non-lifecycle tags (Core/Cloud)."""
+    if status not in LIFECYCLE:
+        return ""
+    cur = LIFECYCLE.index(status)
+    steps = "".join(
+        f'<li class="{"done" if i < cur else "now" if i == cur else "todo"}">{esc(s)}</li>'
+        for i, s in enumerate(LIFECYCLE))
+    return f'<ol class="lifecycle">{steps}</ol>'
+
+
 def build_index(data, kind):
     cats = data["categories"]
     total = sum(len(c["products"]) for c in cats)
@@ -140,6 +155,7 @@ def build_item(p, cat_name, siblings, kind, data):
     <p class="eyebrow">{esc(cat_name)}</p>
     <h1>{esc(p['name'])} {badge(p['status'])}</h1>
     {market_tag(p['slug'])}
+    {lifecycle_stepper(p['status'])}
     <p class="lede">{esc(p['tagline'])}</p>
     <div class="hero-cta">
       <a href="../index.html#contact" class="btn btn-primary">Talk to us</a>
@@ -232,6 +248,11 @@ CATALOG_CSS = """/* Catalog styles, layered on the site's styles.css */
 .related-chip:hover { border-color: var(--brand); }
 .related-chip span { color: var(--muted); font-size: .82rem; margin-top: 3px; }
 .market-tag { display: inline-block; margin: 4px 0 0; font-size: .82rem; color: var(--brand); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; }
+.lifecycle { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 14px 0 0; }
+.lifecycle li { font-size: .74rem; font-weight: 600; letter-spacing: .03em; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+.lifecycle li.done { color: var(--brand-2); border-color: rgba(40,216,176,.4); }
+.lifecycle li.now { color: #04121c; background: linear-gradient(135deg, var(--brand), var(--brand-2)); border-color: transparent; }
+.lifecycle li.todo { opacity: .55; }
 @media (max-width: 720px) { .product-cols { grid-template-columns: 1fr; } }
 """
 

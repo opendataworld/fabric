@@ -80,6 +80,48 @@ class OktaConnector(BaseConnector):
             return users[0] if users else None
         return None
 
+    # ── Native IdP federation (inbound brokered providers) ────────────────────
+
+    # Map Okta IdP `type` -> our canonical provider name (for graph linkage).
+    _IDP_TYPE_MAP = {
+        "GOOGLE": "google", "FACEBOOK": "facebook", "LINKEDIN": "linkedin",
+        "MICROSOFT": "microsoft", "APPLE": "apple", "GITHUB": "github",
+        "OIDC": "custom_oidc", "SAML2": "saml", "X509": "x509",
+    }
+
+    async def _get_user_idps(self, user_id: str) -> list[dict]:
+        """
+        List the external Identity Providers a user is federated through.
+        GET /api/v1/users/{id}/idps  (Admin SSWS).
+        Returns [] on any failure — federation data is best-effort enrichment.
+        """
+        if not (self.api_token and user_id):
+            return []
+        url = f"https://{self.domain}/api/v1/users/{user_id}/idps"
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(
+                    url,
+                    headers={"Authorization": f"SSWS {self.api_token}",
+                             "Accept": "application/json"},
+                )
+            return resp.json() if resp.status_code == 200 else []
+        except Exception:
+            return []
+
+    def _idp_stubs(self, idps: list[dict]) -> list[dict]:
+        """Convert Okta IdP records into cross-provider linkage stubs."""
+        stubs = []
+        for idp in idps:
+            provider = self._IDP_TYPE_MAP.get(idp.get("type", ""), (idp.get("type") or "").lower())
+            stubs.append({
+                "provider": provider,
+                "provider_sub": idp.get("id", ""),
+                "via": "okta-federation",
+                "idp_name": idp.get("name"),
+            })
+        return stubs
+
     # ── IdentityNode builder ──────────────────────────────────────────────────
 
     def _build_node_from_admin(self, user: dict) -> IdentityNode:
@@ -136,7 +178,12 @@ class OktaConnector(BaseConnector):
                 user = await self._search_users_admin(identifier)
             if not user:
                 return None
-            return self._build_node_from_admin(user)
+            node = self._build_node_from_admin(user)
+            # Native IdP federation: link upstream brokered providers into the graph.
+            idps = await self._get_user_idps(user.get("id", ""))
+            if idps:
+                node.linked_account_stubs.extend(self._idp_stubs(idps))
+            return node
 
         if token:
             data = await get_json(

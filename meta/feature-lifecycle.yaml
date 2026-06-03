@@ -1,0 +1,48 @@
+# Feature Lifecycle — a governed lifecycle for every offering in the catalog.
+#
+# Modeled on the State primitive (states/state-model.yaml): a named lifecycle
+# with ordered stage values and allowed transitions. Inspired by Okta's feature
+# lifecycle management (Early Access -> Beta -> GA -> Deprecated).
+id: "fabric:lifecycle:feature"
+name: "Feature Lifecycle"
+appliesTo: "catalog offering (product, feature, solution)"
+basePrimitive: "fabric:primitive:state"
+
+# Ordered stages — index gives pipeline position for the UI stepper.
+stages:
+  - value: "Planned"
+    order: 0
+    description: "Decided to build; not yet designed."
+    allowedTransitions: ["In design", "Retired"]
+  - value: "In design"
+    order: 1
+    description: "Being specified/designed; no usable implementation."
+    allowedTransitions: ["Beta", "Retired"]
+  - value: "Beta"
+    order: 2
+    aliases: ["Early Access", "EA"]
+    description: "Usable but evolving; not covered by stability guarantees."
+    allowedTransitions: ["Available", "Retired"]
+  - value: "Available"
+    order: 3
+    aliases: ["GA", "General Availability"]
+    description: "Generally available and supported."
+    allowedTransitions: ["Deprecated"]
+  - value: "Deprecated"
+    order: 4
+    description: "Still works but slated for removal; migrate away."
+    allowedTransitions: ["Retired"]
+  - value: "Retired"
+    order: 5
+    description: "No longer available."
+    allowedTransitions: []
+
+# Non-lifecycle tags used by the Features catalog (capability attributes, not stages).
+attributeTags:
+  - "Core"
+  - "Cloud"
+
+invariants:
+  - "A transition target must appear in the current stage's allowedTransitions."
+  - "Exactly one current stage per offering."
+  - "Stage changes are recorded as Events (audit trail)."
