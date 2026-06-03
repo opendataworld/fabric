@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabric Graph — GPU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .graph-bar { display: flex; align-items: center; gap: 14px; padding: 12px 24px;
+      border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .graph-bar .stat { color: var(--muted); font-size: .9rem; }
+    .graph-bar .stat b { color: var(--brand-2); }
+    #cosmos { width: 100%; height: calc(100vh - 132px); background: var(--bg); }
+    .note { color: var(--muted); font-size: .82rem; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>
+      <span>Fabric<small>Graph · GPU</small></span></a>
+    <nav class="nav-links"><a href="graph.html">Standard graph</a>
+      <a href="chat.html">Chat</a></nav>
+  </header>
+
+  <div class="graph-bar">
+    <span class="stat" id="stat">Loading GPU renderer…</span>
+    <span class="note">GPU-accelerated (WebGL via Cosmos) — built to scale to 100k+ nodes.</span>
+  </div>
+  <div id="cosmos"></div>
+
+  <script type="module">
+    const API_BASE = window.FABRIC_API_BASE || "http://localhost:8088";
+    const statEl = document.getElementById("stat");
+
+    let Graph;
+    try {
+      ({ Graph } = await import("https://esm.sh/@cosmograph/cosmos@1.4.1"));
+    } catch (e) {
+      statEl.innerHTML = "⚠️ Could not load the GPU library. Use the " +
+        "<a href='graph.html'>standard graph</a> instead.";
+      throw e;
+    }
+
+    let data;
+    try {
+      const r = await fetch(API_BASE + "/graph");
+      if (!r.ok) throw new Error(r.statusText);
+      data = await r.json();
+    } catch (e) {
+      statEl.innerHTML = "⚠️ Could not reach Fabric API at " + API_BASE +
+        " — is it running? Try the <a href='graph.html'>standard graph</a>.";
+      throw e;
+    }
+
+    statEl.innerHTML = "GPU graph · <b>" + data.nodes.length + "</b> nodes · <b>" +
+      data.edges.length + "</b> edges";
+
+    const index = new Map(data.nodes.map((n, i) => [n.id, i]));
+    const nodes = data.nodes.map(n => ({ id: n.id, label: n.name }));
+    const links = data.edges
+      .filter(e => index.has(e.from) && index.has(e.to))
+      .map(e => ({ source: e.from, target: e.to }));
+
+    const config = {
+      backgroundColor: "#0b0e14",
+      nodeColor: "#5b8cff",
+      nodeSize: 6,
+      linkColor: "#232a39",
+      linkWidth: 1,
+      linkArrows: true,
+      simulation: { repulsion: 1.2, linkDistance: 12, gravity: 0.2 },
+      renderLabels: true,
+      nodeLabelAccessor: n => n.label,
+    };
+
+    const graph = new Graph(document.getElementById("cosmos"), config);
+    graph.setData(nodes, links);
+    graph.fitView();
+  </script>
+</body>
+</html>

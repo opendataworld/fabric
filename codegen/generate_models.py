@@ -182,6 +182,10 @@ def _table(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", name.lower())
 
 
+def short(pid: str) -> str:
+    return pid.split(":")[-1]
+
+
 def gen_graph_surql(prims: list[dict]) -> str:
     id2table = {p["id"]: _table(p["name"]) for p in prims}
     out = ["-- Graph schema generated from Fabric primitives — DO NOT EDIT BY HAND.",
@@ -209,6 +213,27 @@ def gen_graph_mermaid(prims: list[dict]) -> str:
             tgt = id2name.get(r["target"])
             if tgt:
                 out.append(f"  {src} -->|{r['name']}| {tgt}")
+    return "\n".join(out) + "\n"
+
+
+def gen_graph_cypher(prims: list[dict]) -> str:
+    """Neo4j Cypher to load the model graph — for Neo4j Browser / Bloom."""
+    known = {p["id"] for p in prims}
+    out = ["// Neo4j Cypher generated from Fabric primitives — DO NOT EDIT BY HAND.",
+           "// Load in Neo4j Browser, then explore in Bloom.", ""]
+    for p in prims:
+        q = (p.get("question", "") or "").replace("'", "\\'")
+        out.append(f"CREATE (:Primitive {{id:'{short(p['id'])}', name:'{p['name']}', question:'{q}'}});")
+    out.append("")
+    for p in prims:
+        for r in p.get("relationships", []):
+            if r["target"] not in known:
+                continue
+            rel = re.sub(r"[^A-Z0-9]+", "_", r["name"].upper())
+            out.append(
+                f"MATCH (a:Primitive {{id:'{short(p['id'])}'}}), "
+                f"(b:Primitive {{id:'{short(r['target'])}'}}) "
+                f"CREATE (a)-[:{rel}]->(b);")
     return "\n".join(out) + "\n"
 
 
@@ -260,6 +285,7 @@ def main():
     if t in ("graph", "all"):
         write(os.path.join(out, "graph", "schema.surql"), gen_graph_surql(prims))
         write(os.path.join(out, "graph", "model.mmd"), gen_graph_mermaid(prims))
+        write(os.path.join(out, "graph", "model.cypher"), gen_graph_cypher(prims))
         nodes, edges, dangling = graph_fit_report(prims)
         print(f"  graph fit: {nodes} nodes, {edges} edges, {len(dangling)} dangling")
         for d in dangling:

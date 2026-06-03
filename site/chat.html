@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fabric Assistant</title>
+  <title>Fabric Agent</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     .chat-wrap { max-width: 760px; margin: 0 auto; padding: 24px; display: flex;
@@ -29,7 +29,7 @@
 <body>
   <header class="nav">
     <a class="brand" href="index.html"><span class="brand-mark"></span>
-      <span>Fabric<small>Assistant</small></span></a>
+      <span>Fabric<small>Agent</small></span></a>
     <nav class="nav-links"><a href="catalog/index.html">Catalog</a>
       <a href="signup.html" class="btn btn-ghost">Sign up</a></nav>
   </header>
@@ -65,7 +65,7 @@
     function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
     async function api(path){ const r = await fetch(API_BASE+path); if(!r.ok) throw new Error((await r.json()).error||r.statusText); return r.json(); }
 
-    const HELP = `I'm the Fabric Assistant, powered by the Data Model API. Try:
+    const HELP = `I'm Fabric Agent, powered by the Data Model API. Try:
 • <code>list classes</code> — all primitives
 • <code>schema &lt;name&gt;</code> — JSON Schema (e.g. <code>schema identity</code>)
 • <code>resolve &lt;name&gt; [depth]</code> — traverse the graph (e.g. <code>resolve identity 2</code>)
