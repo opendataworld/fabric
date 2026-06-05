@@ -23,3 +23,4 @@ web/dist/
 # Nextcloud-on-k3s: never commit real secrets (only the *.example.yaml)
 deploy/k3s/nextcloud/01-secrets.yaml
 deploy/k3s/nextcloud/99-cert-manager.yaml
+deploy/k3s/registry/02-htpasswd.yaml
