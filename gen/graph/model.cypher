@@ -40,6 +40,7 @@ CREATE (:Primitive {id:'state', name:'State', question:'What condition is it in 
 CREATE (:Primitive {id:'tenant', name:'Tenant', question:'Whose isolated space is this?'});
 CREATE (:Primitive {id:'thing', name:'Thing', question:'What is it?'});
 CREATE (:Primitive {id:'time', name:'Time', question:'When does it occur or apply?'});
+CREATE (:Primitive {id:'touchpoint', name:'Touchpoint', question:'Where and how do things interact?'});
 
 MATCH (a:Primitive {id:'account'}), (b:Primitive {id:'identity'}) CREATE (a)-[:OWNEDBY]->(b);
 MATCH (a:Primitive {id:'account'}), (b:Primitive {id:'source'}) CREATE (a)-[:FROMSOURCE]->(b);
@@ -145,3 +146,9 @@ MATCH (a:Primitive {id:'tenant'}), (b:Primitive {id:'resource'}) CREATE (a)-[:OW
 MATCH (a:Primitive {id:'tenant'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
 MATCH (a:Primitive {id:'thing'}), (b:Primitive {id:'thing'}) CREATE (a)-[:RELATEDTO]->(b);
 MATCH (a:Primitive {id:'time'}), (b:Primitive {id:'constraint'}) CREATE (a)-[:SCOPES]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'capability'}) CREATE (a)-[:EXPOSEDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'thing'}) CREATE (a)-[:CONNECTS]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'credential'}) CREATE (a)-[:SECUREDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'event'}) CREATE (a)-[:EMITS]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'location'}) CREATE (a)-[:LOCATEDAT]->(b);

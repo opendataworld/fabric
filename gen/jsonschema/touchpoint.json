@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opendataworld.org/fabric/schema/touchpoint.json",
+  "title": "Touchpoint",
+  "description": "A junction where two or more things interact. Wherever more than two things meet, the touchpoint records HOW they connect: the surface exposed and the protocol spoken (plus payload format, direction, and endpoint). Every touchpoint MUST declare a surface and a protocol \u2014 if no protocol exists yet, the touchpoint is the place where one is defined.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "string",
+      "description": "Interface kind exposed: api | ui | cli | event | file | database | webhook | stream."
+    },
+    "protocol": {
+      "type": "string",
+      "description": "How parties communicate: http | https | grpc | graphql | websocket | sql | amqp | mqtt | kafka | s3 | smtp | custom. Required \u2014 if none exists, define one for this touchpoint."
+    },
+    "format": {
+      "type": "string",
+      "description": "Payload format: json | jsonld | protobuf | avro | csv | form | binary."
+    },
+    "direction": {
+      "type": "string",
+      "description": "inbound | outbound | bidirectional."
+    },
+    "endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the touchpoint is reached."
+    },
+    "protocolVersion": {
+      "type": "string",
+      "description": "Protocol/contract version, e.g. HTTP/2, gRPC v1, OpenAPI 3.1."
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "surface",
+    "protocol"
+  ]
+}

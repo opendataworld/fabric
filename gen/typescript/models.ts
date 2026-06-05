@@ -321,3 +321,15 @@ export interface Time {
   duration?: string;
   timezone?: string;
 }
+
+/** Where and how do things interact?  (fabric:primitive:touchpoint) */
+export interface Touchpoint {
+  id: string;
+  name: string;
+  surface: string;
+  protocol: string;
+  format?: string;
+  direction?: string;
+  endpoint?: string;
+  protocolVersion?: string;
+}

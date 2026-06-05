@@ -18,7 +18,8 @@
     "risk": "fabric:Risk",
     "state": "fabric:State",
     "@vocab": "https://opendataworld.org/fabric/vocab#",
-    "time": "http://www.w3.org/2006/time#"
+    "time": "http://www.w3.org/2006/time#",
+    "touchpoint": "fabric:Touchpoint"
   },
   "@graph": [
     {
@@ -2314,6 +2315,124 @@
           "rdfs:label": "scopes",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:constraint"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:touchpoint",
+      "@type": "schema:EntryPoint",
+      "rdfs:label": "Touchpoint",
+      "rdfs:comment": "Where and how do things interact?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/EntryPoint"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:touchpoint.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.surface",
+          "rdfs:label": "surface",
+          "fabric:dataType": "enum",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:actionPlatform"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.protocol",
+          "rdfs:label": "protocol",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:touchpoint.format",
+          "rdfs:label": "format",
+          "fabric:dataType": "enum",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:encodingFormat"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.direction",
+          "rdfs:label": "direction",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:touchpoint.endpoint",
+          "rdfs:label": "endpoint",
+          "fabric:dataType": "uri",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:urlTemplate"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.protocolVersion",
+          "rdfs:label": "protocolVersion",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:exposedby",
+          "rdfs:label": "exposedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:connects",
+          "rdfs:label": "connects",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        },
+        {
+          "@id": "fabric:securedby",
+          "rdfs:label": "securedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:credential"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:emits",
+          "rdfs:label": "emits",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:locatedat",
+          "rdfs:label": "locatedAt",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:location"
           }
         }
       ]

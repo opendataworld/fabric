@@ -194,6 +194,11 @@
       "id": "time",
       "name": "Time",
       "question": "When does it occur or apply?"
+    },
+    {
+      "id": "touchpoint",
+      "name": "Touchpoint",
+      "question": "Where and how do things interact?"
     }
   ],
   "nodes": [
@@ -352,6 +357,10 @@
     {
       "id": "time",
       "name": "Time"
+    },
+    {
+      "id": "touchpoint",
+      "name": "Touchpoint"
     }
   ],
   "edges": [
@@ -874,6 +883,36 @@
       "from": "time",
       "rel": "scopes",
       "to": "constraint"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "exposedBy",
+      "to": "capability"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "connects",
+      "to": "thing"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "securedBy",
+      "to": "credential"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "governedBy",
+      "to": "policy"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "emits",
+      "to": "event"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "locatedAt",
+      "to": "location"
     }
   ]
 }

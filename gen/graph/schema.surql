@@ -206,6 +206,15 @@ DEFINE FIELD end ON TABLE time TYPE option<datetime>;
 DEFINE FIELD duration ON TABLE time TYPE option<string>;
 DEFINE FIELD timezone ON TABLE time TYPE option<string>;
 
+DEFINE TABLE touchpoint SCHEMAFULL;
+DEFINE FIELD name ON TABLE touchpoint TYPE string;
+DEFINE FIELD surface ON TABLE touchpoint TYPE string;
+DEFINE FIELD protocol ON TABLE touchpoint TYPE string;
+DEFINE FIELD format ON TABLE touchpoint TYPE option<string>;
+DEFINE FIELD direction ON TABLE touchpoint TYPE option<string>;
+DEFINE FIELD endpoint ON TABLE touchpoint TYPE option<string>;
+DEFINE FIELD protocolVersion ON TABLE touchpoint TYPE option<string>;
+
 -- Relationship edges
 DEFINE TABLE ownedby TYPE RELATION IN account OUT identity;
 DEFINE TABLE fromsource TYPE RELATION IN account OUT source;
@@ -311,3 +320,9 @@ DEFINE TABLE owns TYPE RELATION IN tenant OUT resource;
 DEFINE TABLE governedby TYPE RELATION IN tenant OUT policy;
 DEFINE TABLE relatedto TYPE RELATION IN thing OUT thing;
 DEFINE TABLE scopes TYPE RELATION IN time OUT constraint;
+DEFINE TABLE exposedby TYPE RELATION IN touchpoint OUT capability;
+DEFINE TABLE connects TYPE RELATION IN touchpoint OUT thing;
+DEFINE TABLE securedby TYPE RELATION IN touchpoint OUT credential;
+DEFINE TABLE governedby TYPE RELATION IN touchpoint OUT policy;
+DEFINE TABLE emits TYPE RELATION IN touchpoint OUT event;
+DEFINE TABLE locatedat TYPE RELATION IN touchpoint OUT location;

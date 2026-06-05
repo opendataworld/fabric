@@ -103,3 +103,9 @@ graph LR
   Tenant -->|governedBy| Policy
   Thing -->|relatedTo| Thing
   Time -->|scopes| Constraint
+  Touchpoint -->|exposedBy| Capability
+  Touchpoint -->|connects| Thing
+  Touchpoint -->|securedBy| Credential
+  Touchpoint -->|governedBy| Policy
+  Touchpoint -->|emits| Event
+  Touchpoint -->|locatedAt| Location

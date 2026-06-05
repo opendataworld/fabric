@@ -366,3 +366,16 @@ class Time:
     duration: Optional[str] = None
     timezone: Optional[str] = None
 
+
+@dataclass
+class Touchpoint:
+    """Where and how do things interact?  (fabric:primitive:touchpoint)"""
+    id: str
+    name: str
+    surface: str
+    protocol: str
+    format: Optional[str] = None
+    direction: Optional[str] = None
+    endpoint: Optional[str] = None
+    protocolVersion: Optional[str] = None
+

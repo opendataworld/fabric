@@ -282,3 +282,14 @@ CREATE TABLE IF NOT EXISTS time (
     duration TEXT,
     timezone TEXT
 );
+
+CREATE TABLE IF NOT EXISTS touchpoint (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    surface TEXT NOT NULL,
+    protocol TEXT NOT NULL,
+    format TEXT,
+    direction TEXT,
+    endpoint TEXT,
+    protocolVersion TEXT
+);
