@@ -1,0 +1,59 @@
+# Feedback intake form
+id: "fabric:feature:feedback-intake-form"
+name: "Feedback intake form"
+version: "0.1.0"
+layer: "domain"
+question: "What product capability is this?"
+extends: ["fabric:primitive:feature"]
+status: "Beta"
+relationships:
+  - { name: partOf, target: "fabric:product:customer-feedback-collector", cardinality: "0..*" }
+  - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }
+---
+# Channel connectors (email, chat, web)
+id: "fabric:feature:channel-connectors-email-chat-web"
+name: "Channel connectors (email, chat, web)"
+version: "0.1.0"
+layer: "domain"
+question: "What product capability is this?"
+extends: ["fabric:primitive:feature"]
+status: "In design"
+relationships:
+  - { name: partOf, target: "fabric:product:customer-feedback-collector", cardinality: "0..*" }
+  - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }
+---
+# Sentiment & topic tagging
+id: "fabric:feature:sentiment-topic-tagging"
+name: "Sentiment & topic tagging"
+version: "0.1.0"
+layer: "domain"
+question: "What product capability is this?"
+extends: ["fabric:primitive:feature"]
+status: "Planned"
+relationships:
+  - { name: partOf, target: "fabric:product:customer-feedback-collector", cardinality: "0..*" }
+  - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }
+---
+# Routing & ownership rules
+id: "fabric:feature:routing-ownership-rules"
+name: "Routing & ownership rules"
+version: "0.1.0"
+layer: "domain"
+question: "What product capability is this?"
+extends: ["fabric:primitive:feature"]
+status: "Planned"
+relationships:
+  - { name: partOf, target: "fabric:product:customer-feedback-collector", cardinality: "0..*" }
+  - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }
+---
+# Consent-aware storage
+id: "fabric:feature:consent-aware-storage"
+name: "Consent-aware storage"
+version: "0.1.0"
+layer: "domain"
+question: "What product capability is this?"
+extends: ["fabric:primitive:feature"]
+status: "In design"
+relationships:
+  - { name: partOf, target: "fabric:product:customer-feedback-collector", cardinality: "0..*" }
+  - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }

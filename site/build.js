@@ -239,7 +239,7 @@ function renderFeatures() {
 /* ---------- step 4: review / export ---------- */
 function caps() {
   return [
-    ...state.capabilities,
+    ...state.capabilities.map((id) => "fabric:primitive:" + id),
     ...state.customCaps.map((c) => "fabric:capability:" + slugify(c)),
   ];
 }
@@ -262,6 +262,7 @@ function productYaml() {
     "  - { name: name, type: string, required: true }",
     "  - { name: tagline, type: string, required: false }",
     "  - { name: status, type: string, required: false }",
+    "tagline: " + yamlStr(state.tagline || ""),
     "status: " + yamlStr(state.status),
     "relationships:",
   ];
