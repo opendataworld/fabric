@@ -1,0 +1,57 @@
+# Zero-trust east-west networking. Default-deny ingress for the namespace,
+# then explicit allows. Requires a NetworkPolicy-capable CNI — k3s ships
+# with one when started using `--flannel-backend` + the bundled controller,
+# or install a CNCF CNI (Cilium / Calico). On a stock flannel-only k3s these
+# are inert (fail-open), so treat them as defense-in-depth.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: nextcloud
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+---
+# Traefik (in kube-system) may reach the Nextcloud web port.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-nextcloud
+  namespace: nextcloud
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: TCP
+          port: 80
+---
+# Only Nextcloud pods may reach Postgres and Redis.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nextcloud-to-data
+  namespace: nextcloud
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: ["postgres", "redis"]
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: nextcloud
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 6379
