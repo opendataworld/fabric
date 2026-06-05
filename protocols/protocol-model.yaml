@@ -39,6 +39,8 @@ relationships:
 invariants:
   - "A Protocol MUST have a name; a 'custom' Protocol SHOULD link its spec once defined."
   - "Touchpoints at a boundary reference the Protocol they speak; reusing a defined Protocol is preferred over re-defining."
+  - "A Protocol is realized as a SIDECAR adapter alongside the core — never embedded in core logic. The core (the graph runtime + identity) stays protocol-agnostic; binding and translation happen in the sidecar (Dapr/service-mesh binding pattern)."
+  - "Adding or changing a protocol MUST NOT require changing core code — only deploying/updating its sidecar adapter."
 examples:
   - { name: "HTTPS", version: "HTTP/2", format: "json", status: "standard", spec: "https://www.rfc-editor.org/rfc/rfc9113" }
   - { name: "Model Context Protocol", version: "2025-06", format: "json", status: "standard", spec: "https://modelcontextprotocol.io" }
