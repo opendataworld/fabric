@@ -1,0 +1,31 @@
+# Public HTTPS endpoint for the registry (needed to docker/podman push & pull).
+# Replace registry.example.com with your hostname (install.sh does this).
+# Requires cert-manager + a `letsencrypt-prod` ClusterIssuer for real TLS.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zot
+  namespace: registry
+  labels:
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/part-of: registry
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - registry.example.com
+      secretName: zot-tls
+  rules:
+    - host: registry.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: zot
+                port:
+                  number: 5000

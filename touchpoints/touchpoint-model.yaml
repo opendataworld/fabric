@@ -1,0 +1,86 @@
+# Touchpoint — where two or more things interact, and HOW
+id: "fabric:primitive:touchpoint"
+name: "Touchpoint"
+version: "1.0.0"
+layer: "domain"
+question: "Where and how do things interact?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A junction where two or more things interact. Wherever more than two things
+  meet, the touchpoint records HOW they connect: the surface exposed and the
+  protocol spoken (plus payload format, direction, and endpoint). Every
+  touchpoint MUST declare a surface and a protocol — if no protocol exists yet,
+  the touchpoint is the place where one is defined.
+schemaOrg:
+  type: "schema:EntryPoint"
+  url: "https://schema.org/EntryPoint"
+  note: >
+    schema:EntryPoint already models an access point with httpMethod,
+    actionPlatform, and contentType — Touchpoint generalizes it across any
+    surface/protocol, not just HTTP actions.
+jsonldContext:
+  touchpoint: "fabric:Touchpoint"
+attributes:
+  - { name: id, type: string, required: true, schemaOrg: "schema:identifier" }
+  - { name: name, type: string, required: true, schemaOrg: "schema:name" }
+  - name: surface
+    type: enum
+    required: true
+    schemaOrg: "schema:actionPlatform"
+    description: "Interface kind exposed: api | ui | cli | event | file | database | webhook | stream | agent | tool."
+  - name: protocol
+    type: enum
+    required: true
+    description: >
+      How parties communicate: http | https | grpc | graphql | websocket | sql |
+      amqp | mqtt | kafka | s3 | smtp | a2a | mcp | custom. Note: a2a
+      (Agent-to-Agent) is agent↔agent — same type on both sides, so it is the
+      SEAMLESS case and not itself a boundary touchpoint. The boundary is where
+      an agent meets a different type: agent↔tool uses mcp (Model Context
+      Protocol). Required — if no protocol exists for a boundary, define one.
+  - name: format
+    type: enum
+    required: false
+    schemaOrg: "schema:encodingFormat"
+    description: "Payload format: json | jsonld | protobuf | avro | csv | form | binary."
+  - name: direction
+    type: enum
+    required: false
+    description: "inbound | outbound | bidirectional."
+  - { name: endpoint, type: uri, required: false, schemaOrg: "schema:urlTemplate", description: "Where the touchpoint is reached." }
+  - { name: protocolVersion, type: string, required: false, description: "Protocol/contract version, e.g. HTTP/2, gRPC v1, OpenAPI 3.1." }
+relationships:
+  - { name: speaks, target: "fabric:primitive:protocol", cardinality: "1..*", description: "The defined Protocol(s) this touchpoint exchanges over. If none exists for the boundary, a Protocol is defined and referenced here." }
+  - { name: exposedBy, target: "fabric:primitive:capability", cardinality: "0..*", description: "Capability that exposes this touchpoint." }
+  - { name: connects, target: "fabric:primitive:thing", cardinality: "1..*", description: "The two-or-more things that interact here (it is the junction, not a single edge)." }
+  - { name: securedBy, target: "fabric:primitive:credential", cardinality: "0..*", description: "Credential/auth required to use it." }
+  - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*", description: "Policy constraining the interaction." }
+  - { name: emits, target: "fabric:primitive:event", cardinality: "0..*", description: "Events produced when the touchpoint is used." }
+  - { name: locatedAt, target: "fabric:primitive:location", cardinality: "0..1", description: "Network/physical location of the touchpoint." }
+invariants:
+  - "A touchpoint is REQUIRED only at a boundary — where the interacting things differ in type or in surface/protocol."
+  - "If both sides are the same type of thing sharing one surface and protocol, no touchpoint definition is required (the interaction is seamless)."
+  - "Every defined touchpoint MUST declare a surface and a protocol; if no protocol exists for a required boundary, one MUST be defined before the interaction is used."
+  - "A boundary interaction with no covering touchpoint is a design gap and MUST be reported (the system design does not cover that touchpoint)."
+  - "A touchpoint connects two or more things; a strictly point-to-point link with a shared surface is a Relationship, not a Touchpoint."
+examples:
+  - name: "Marketplace REST API"
+    surface: "api"
+    protocol: "https"
+    format: "json"
+    direction: "bidirectional"
+    endpoint: "https://api.example.com/v1"
+    protocolVersion: "OpenAPI 3.1"
+  - name: "SurrealDB substrate connection"
+    surface: "database"
+    protocol: "websocket"
+    format: "json"
+    direction: "bidirectional"
+    endpoint: "wss://surreal.internal/rpc"
+  # Note: agent↔agent (a2a) is same-type, so it's seamless — NOT a touchpoint.
+  # The boundary worth defining is agent↔tool:
+  - name: "Agent-to-tool (database as a tool)"
+    surface: "tool"
+    protocol: "mcp"
+    format: "json"
+    direction: "bidirectional"

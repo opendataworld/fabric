@@ -90,5 +90,16 @@ fabric/
 ├── capabilities/
 ├── constraints/
 ├── policies/
-└── objectives/
+├── objectives/
+├── api/             # Data Model API (Python, REST)
+├── fabric-db/       # SurrealDB runtime scaffold (Rust, design-stage)
+└── runtime/         # data-fabric runtime (Go): multi-model graph, GraphQL
 ```
+
+## Runtime
+
+[`runtime/`](runtime) is a runnable Go data-fabric runtime: an in-memory
+multi-model graph (documents + typed edges) seeded self-describingly from
+`gen/model.json` and served over **GraphQL**. See
+[`runtime/README.md`](runtime/README.md). `cd runtime && go run .` then open
+`http://localhost:8088/`.

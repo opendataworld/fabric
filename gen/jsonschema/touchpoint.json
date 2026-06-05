@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opendataworld.org/fabric/schema/touchpoint.json",
+  "title": "Touchpoint",
+  "description": "A junction where two or more things interact. Wherever more than two things meet, the touchpoint records HOW they connect: the surface exposed and the protocol spoken (plus payload format, direction, and endpoint). Every touchpoint MUST declare a surface and a protocol \u2014 if no protocol exists yet, the touchpoint is the place where one is defined.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "string",
+      "description": "Interface kind exposed: api | ui | cli | event | file | database | webhook | stream | agent | tool."
+    },
+    "protocol": {
+      "type": "string",
+      "description": "How parties communicate: http | https | grpc | graphql | websocket | sql | amqp | mqtt | kafka | s3 | smtp | a2a | mcp | custom. Note: a2a (Agent-to-Agent) is agent\u2194agent \u2014 same type on both sides, so it is the SEAMLESS case and not itself a boundary touchpoint. The boundary is where an agent meets a different type: agent\u2194tool uses mcp (Model Context Protocol). Required \u2014 if no protocol exists for a boundary, define one.\n"
+    },
+    "format": {
+      "type": "string",
+      "description": "Payload format: json | jsonld | protobuf | avro | csv | form | binary."
+    },
+    "direction": {
+      "type": "string",
+      "description": "inbound | outbound | bidirectional."
+    },
+    "endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the touchpoint is reached."
+    },
+    "protocolVersion": {
+      "type": "string",
+      "description": "Protocol/contract version, e.g. HTTP/2, gRPC v1, OpenAPI 3.1."
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "surface",
+    "protocol"
+  ]
+}

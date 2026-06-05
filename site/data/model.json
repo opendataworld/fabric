@@ -136,6 +136,11 @@
       "question": "What packaged offering is this?"
     },
     {
+      "id": "protocol",
+      "name": "Protocol",
+      "question": "What are the rules of exchange?"
+    },
+    {
       "id": "relationship",
       "name": "Relationship",
       "question": "How are things connected?"
@@ -154,6 +159,11 @@
       "id": "role",
       "name": "Role",
       "question": "What set of permissions is granted?"
+    },
+    {
+      "id": "runtime",
+      "name": "Runtime",
+      "question": "What executes, remembers, and responds?"
     },
     {
       "id": "schema",
@@ -194,6 +204,11 @@
       "id": "time",
       "name": "Time",
       "question": "When does it occur or apply?"
+    },
+    {
+      "id": "touchpoint",
+      "name": "Touchpoint",
+      "question": "Where and how do things interact?"
     }
   ],
   "nodes": [
@@ -306,6 +321,10 @@
       "name": "Product"
     },
     {
+      "id": "protocol",
+      "name": "Protocol"
+    },
+    {
       "id": "relationship",
       "name": "Relationship"
     },
@@ -320,6 +339,10 @@
     {
       "id": "role",
       "name": "Role"
+    },
+    {
+      "id": "runtime",
+      "name": "Runtime"
     },
     {
       "id": "schema",
@@ -352,6 +375,10 @@
     {
       "id": "time",
       "name": "Time"
+    },
+    {
+      "id": "touchpoint",
+      "name": "Touchpoint"
     }
   ],
   "edges": [
@@ -394,6 +421,11 @@
       "from": "agent",
       "rel": "hasMemory",
       "to": "event"
+    },
+    {
+      "from": "agent",
+      "rel": "guards",
+      "to": "touchpoint"
     },
     {
       "from": "application",
@@ -731,6 +763,16 @@
       "to": "state"
     },
     {
+      "from": "protocol",
+      "rel": "carries",
+      "to": "schema"
+    },
+    {
+      "from": "protocol",
+      "rel": "specifiedBy",
+      "to": "evidence"
+    },
+    {
       "from": "relationship",
       "rel": "connects",
       "to": "thing"
@@ -779,6 +821,36 @@
       "from": "role",
       "rel": "assignedTo",
       "to": "identity"
+    },
+    {
+      "from": "runtime",
+      "rel": "binds",
+      "to": "identity"
+    },
+    {
+      "from": "runtime",
+      "rel": "hosts",
+      "to": "agent"
+    },
+    {
+      "from": "runtime",
+      "rel": "remembers",
+      "to": "event"
+    },
+    {
+      "from": "runtime",
+      "rel": "holds",
+      "to": "state"
+    },
+    {
+      "from": "runtime",
+      "rel": "exposes",
+      "to": "touchpoint"
+    },
+    {
+      "from": "runtime",
+      "rel": "guarantees",
+      "to": "objective"
     },
     {
       "from": "schema",
@@ -874,6 +946,41 @@
       "from": "time",
       "rel": "scopes",
       "to": "constraint"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "speaks",
+      "to": "protocol"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "exposedBy",
+      "to": "capability"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "connects",
+      "to": "thing"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "securedBy",
+      "to": "credential"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "governedBy",
+      "to": "policy"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "emits",
+      "to": "event"
+    },
+    {
+      "from": "touchpoint",
+      "rel": "locatedAt",
+      "to": "location"
     }
   ]
 }

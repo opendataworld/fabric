@@ -1,0 +1,41 @@
+# Login identity for the Kubernetes Dashboard.
+#
+# This grants FULL cluster-admin — it's a cluster control panel, so that's the
+# point, but treat the token like a root password. For least privilege, bind to
+# the built-in `view` ClusterRole instead of `cluster-admin` below.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+  labels:
+    app.kubernetes.io/part-of: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+  labels:
+    app.kubernetes.io/part-of: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin # change to `view` for read-only access
+subjects:
+  - kind: ServiceAccount
+    name: admin-user
+    namespace: kubernetes-dashboard
+---
+# A long-lived token for the admin-user, so `install.sh` can print a login
+# token without you having to mint one each time. Delete this Secret if you
+# prefer short-lived `kubectl -n kubernetes-dashboard create token admin-user`.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user-token
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: admin-user
+  labels:
+    app.kubernetes.io/part-of: kubernetes-dashboard
+type: kubernetes.io/service-account-token

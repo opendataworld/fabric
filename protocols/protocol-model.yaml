@@ -1,0 +1,48 @@
+# Protocol — the defined rules of exchange a touchpoint speaks
+id: "fabric:primitive:protocol"
+name: "Protocol"
+version: "1.0.0"
+layer: "domain"
+question: "What are the rules of exchange?"
+extends: ["fabric:primitive:thing"]
+description: >
+  A defined set of rules for exchanging data across a boundary — the contract a
+  Touchpoint speaks. Well-known protocols (https, grpc, mcp, ...) are referenced
+  by name; when a boundary has no existing protocol, a Protocol is DEFINED here:
+  its message format, version, and a link to its spec/contract. This is where
+  "if no protocol exists, we define one" becomes a concrete, reusable asset.
+schemaOrg:
+  type: "schema:CreativeWork"
+  url: "https://schema.org/CreativeWork"
+  note: >
+    schema.org has no native Protocol type; a protocol is modelled as a defined
+    work (a specification) — closest to schema:CreativeWork / a spec document.
+jsonldContext:
+  protocol: "fabric:Protocol"
+attributes:
+  - { name: id, type: string, required: true, schemaOrg: "schema:identifier" }
+  - { name: name, type: string, required: true, schemaOrg: "schema:name" }
+  - { name: version, type: string, required: false, schemaOrg: "schema:version", description: "Protocol/contract version, e.g. HTTP/2, gRPC v1, MCP 2025-06." }
+  - name: format
+    type: enum
+    required: false
+    schemaOrg: "schema:encodingFormat"
+    description: "Wire format: json | jsonld | protobuf | avro | csv | form | binary."
+  - { name: spec, type: uri, required: false, schemaOrg: "schema:url", description: "Link to the defining spec/contract (OpenAPI, .proto, JSON Schema, RFC)." }
+  - name: status
+    type: enum
+    required: false
+    description: "standard | custom | draft — 'custom' marks a protocol newly defined for an uncovered boundary."
+relationships:
+  - { name: carries, target: "fabric:primitive:schema", cardinality: "0..*", description: "The schema/shape of the data this protocol exchanges." }
+  - { name: specifiedBy, target: "fabric:primitive:evidence", cardinality: "0..1", description: "The spec document/artifact that defines it." }
+invariants:
+  - "A Protocol MUST have a name; a 'custom' Protocol SHOULD link its spec once defined."
+  - "Touchpoints at a boundary reference the Protocol they speak; reusing a defined Protocol is preferred over re-defining."
+  - "A Protocol is realized as a SIDECAR adapter alongside the core — never embedded in core logic. The core (the graph runtime + identity) stays protocol-agnostic; binding and translation happen in the sidecar (Dapr/service-mesh binding pattern)."
+  - "Sidecars ARE agents: each protocol sidecar is realized by an Agent that guards the Touchpoint and does the binding/translation. The edge is all agents; the core is the graph + identity + memory."
+  - "Adding or changing a protocol MUST NOT require changing core code — only deploying/updating its sidecar adapter."
+examples:
+  - { name: "HTTPS", version: "HTTP/2", format: "json", status: "standard", spec: "https://www.rfc-editor.org/rfc/rfc9113" }
+  - { name: "Model Context Protocol", version: "2025-06", format: "json", status: "standard", spec: "https://modelcontextprotocol.io" }
+  - { name: "Marketplace ingest v1", version: "1.0.0", format: "json", status: "custom" }

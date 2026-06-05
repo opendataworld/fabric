@@ -15,3 +15,8 @@ relationships:
   - { name: pursues, target: "fabric:primitive:objective", cardinality: "0..*" }
   - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*" }
   - { name: hasMemory, target: "fabric:primitive:event", cardinality: "0..*" }
+  - { name: guards, target: "fabric:primitive:touchpoint", cardinality: "0..*", description: "Touchpoints (platform edges) the agent operates on — e.g. to prevent leakage at a boundary." }
+invariants:
+  - "An agent's core definition MUST depend only on the stable core (existing State, Identity, the graph) — never on future or not-yet-real things. Depend toward stability (avoids the Unstable Dependency smell)."
+  - "An agent's path through the state/journey graph is EMERGENT and non-mandatory; the graph is possibility space, not a required flow. The agent is bounded only by Policy/Constraint, never by a prescribed route."
+  - "Everything an agent treats as important MUST be a State in the graph (observable, persisted, governed) — not hidden in the agent's own memory."

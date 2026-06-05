@@ -1,0 +1,151 @@
+# Nextcloud (apache image) + a lightweight cron sidecar that runs the
+# recommended background-job loop (php cron.php every 5 min) against the
+# same data volume.
+#
+# The apache variant binds :80 and its entrypoint fixes file ownership on
+# first run, so the pod is not fully rootless. We still apply the
+# RuntimeDefault seccomp profile and block privilege escalation; tighten
+# further by switching to the `-fpm` image behind an nginx sidecar if you
+# need a non-root web tier.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-data
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  selector:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/part-of: nextcloud
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/part-of: nextcloud
+    app.kubernetes.io/component: server
+spec:
+  replicas: 1
+  # local-path is ReadWriteOnce + node-local, so never run two web pods
+  # against the same PVC. Recreate avoids a multi-attach deadlock on rollout.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+      app.kubernetes.io/part-of: nextcloud
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/part-of: nextcloud
+        app.kubernetes.io/component: server
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        # ----- web / app tier -------------------------------------------
+        - name: nextcloud
+          image: nextcloud:30-apache
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - name: http
+              containerPort: 80
+          # All non-secret settings come from the ConfigMap (08-config.yaml);
+          # credentials from the Secrets (01-secrets.yaml).
+          envFrom:
+            - configMapRef:
+                name: nextcloud-config
+            - secretRef:
+                name: nextcloud-db
+            - secretRef:
+                name: nextcloud-redis
+            - secretRef:
+                name: nextcloud-admin
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/html
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          startupProbe:
+            # First boot copies the app into the volume and runs install —
+            # give it generous time before liveness kicks in.
+            httpGet:
+              path: /status.php
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /status.php
+              port: http
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /status.php
+              port: http
+            periodSeconds: 30
+        # ----- background jobs (cron) -----------------------------------
+        - name: cron
+          image: nextcloud:30-apache
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while true; do
+                php -f /var/www/html/cron.php || true
+                sleep 300
+              done
+          envFrom:
+            - configMapRef:
+                name: nextcloud-config
+            - secretRef:
+                name: nextcloud-db
+            - secretRef:
+                name: nextcloud-redis
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/html
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: nextcloud-data

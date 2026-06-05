@@ -1,0 +1,23 @@
+# Optional: Let's Encrypt ClusterIssuer for cert-manager (CNCF).
+#
+# Install cert-manager first:
+#   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+#
+# Then edit the email below and apply this file. The Ingress in
+# 05-ingress.yaml references this issuer by name (letsencrypt-prod) and
+# cert-manager will provision the `nextcloud-tls` secret automatically via
+# the Traefik HTTP-01 solver.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: CHANGE_ME@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik

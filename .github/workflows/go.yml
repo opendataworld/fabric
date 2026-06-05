@@ -1,0 +1,42 @@
+# CI for the Go data-fabric runtime (runtime/).
+name: Fabric runtime (Go)
+
+on:
+  push:
+    paths:
+      - "runtime/**"
+      - "gen/model.json"
+      - "gen/jsonschema/**"
+      - ".github/workflows/go.yml"
+  pull_request:
+    paths:
+      - "runtime/**"
+      - "gen/model.json"
+      - "gen/jsonschema/**"
+      - ".github/workflows/go.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: runtime
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Format check
+        run: test -z "$(gofmt -l $(git ls-files '*.go' | grep -v '^vendor/'))"
+      - name: Vet
+        run: go vet -mod=vendor ./...
+      - name: Test
+        run: go test -mod=vendor ./...
+      - name: Build
+        run: go build -mod=vendor -o /tmp/fabric-runtime .
+      - name: Selftest
+        run: /tmp/fabric-runtime --selftest

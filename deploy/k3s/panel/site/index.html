@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>k3s Stack Catalog</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Desktop-style window chrome -->
+  <div class="window">
+    <header class="titlebar">
+      <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="title" id="winTitle">k3s Stack Catalog</div>
+      <input id="search" class="search" type="search" placeholder="Filter components…" />
+    </header>
+
+    <div class="body">
+      <nav class="sidebar" id="sidebar"><!-- categories injected --></nav>
+      <main class="content">
+        <p class="subtitle" id="subtitle"></p>
+        <div id="catalog"><!-- cards injected --></div>
+      </main>
+    </div>
+
+    <footer class="statusbar">
+      <span id="counts"></span>
+      <span class="legend">
+        <i class="dot deployed"></i> deployed
+        <i class="dot available"></i> available
+        <i class="badge-cncf maturity-graduated">graduated</i>
+        <i class="badge-cncf maturity-incubating">incubating</i>
+      </span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

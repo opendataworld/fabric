@@ -28,10 +28,12 @@ CREATE (:Primitive {id:'permission', name:'Permission', question:'What action is
 CREATE (:Primitive {id:'pipeline', name:'Pipeline', question:'How does data move?'});
 CREATE (:Primitive {id:'policy', name:'Policy', question:'What is allowed, and under what conditions?'});
 CREATE (:Primitive {id:'product', name:'Product', question:'What packaged offering is this?'});
+CREATE (:Primitive {id:'protocol', name:'Protocol', question:'What are the rules of exchange?'});
 CREATE (:Primitive {id:'relationship', name:'Relationship', question:'How are things connected?'});
 CREATE (:Primitive {id:'resource', name:'Resource', question:'What is consumed, allocated, or required?'});
 CREATE (:Primitive {id:'risk', name:'Risk', question:'What could go wrong, and how bad?'});
 CREATE (:Primitive {id:'role', name:'Role', question:'What set of permissions is granted?'});
+CREATE (:Primitive {id:'runtime', name:'Runtime', question:'What executes, remembers, and responds?'});
 CREATE (:Primitive {id:'schema', name:'Schema', question:'How is this entity\'s structure composed?'});
 CREATE (:Primitive {id:'session', name:'Session', question:'When and how was access established?'});
 CREATE (:Primitive {id:'solution', name:'Solution', question:'What outcome does this compose?'});
@@ -40,6 +42,7 @@ CREATE (:Primitive {id:'state', name:'State', question:'What condition is it in 
 CREATE (:Primitive {id:'tenant', name:'Tenant', question:'Whose isolated space is this?'});
 CREATE (:Primitive {id:'thing', name:'Thing', question:'What is it?'});
 CREATE (:Primitive {id:'time', name:'Time', question:'When does it occur or apply?'});
+CREATE (:Primitive {id:'touchpoint', name:'Touchpoint', question:'Where and how do things interact?'});
 
 MATCH (a:Primitive {id:'account'}), (b:Primitive {id:'identity'}) CREATE (a)-[:OWNEDBY]->(b);
 MATCH (a:Primitive {id:'account'}), (b:Primitive {id:'source'}) CREATE (a)-[:FROMSOURCE]->(b);
@@ -49,6 +52,7 @@ MATCH (a:Primitive {id:'agent'}), (b:Primitive {id:'capability'}) CREATE (a)-[:E
 MATCH (a:Primitive {id:'agent'}), (b:Primitive {id:'objective'}) CREATE (a)-[:PURSUES]->(b);
 MATCH (a:Primitive {id:'agent'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
 MATCH (a:Primitive {id:'agent'}), (b:Primitive {id:'event'}) CREATE (a)-[:HASMEMORY]->(b);
+MATCH (a:Primitive {id:'agent'}), (b:Primitive {id:'touchpoint'}) CREATE (a)-[:GUARDS]->(b);
 MATCH (a:Primitive {id:'application'}), (b:Primitive {id:'account'}) CREATE (a)-[:AUTHENTICATES]->(b);
 MATCH (a:Primitive {id:'application'}), (b:Primitive {id:'tenant'}) CREATE (a)-[:REGISTEREDIN]->(b);
 MATCH (a:Primitive {id:'application'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
@@ -116,6 +120,8 @@ MATCH (a:Primitive {id:'policy'}), (b:Primitive {id:'identity'}) CREATE (a)-[:AP
 MATCH (a:Primitive {id:'product'}), (b:Primitive {id:'capability'}) CREATE (a)-[:PACKAGES]->(b);
 MATCH (a:Primitive {id:'product'}), (b:Primitive {id:'market'}) CREATE (a)-[:ADDRESSES]->(b);
 MATCH (a:Primitive {id:'product'}), (b:Primitive {id:'state'}) CREATE (a)-[:HASSTATE]->(b);
+MATCH (a:Primitive {id:'protocol'}), (b:Primitive {id:'schema'}) CREATE (a)-[:CARRIES]->(b);
+MATCH (a:Primitive {id:'protocol'}), (b:Primitive {id:'evidence'}) CREATE (a)-[:SPECIFIEDBY]->(b);
 MATCH (a:Primitive {id:'relationship'}), (b:Primitive {id:'thing'}) CREATE (a)-[:CONNECTS]->(b);
 MATCH (a:Primitive {id:'resource'}), (b:Primitive {id:'capability'}) CREATE (a)-[:CONSUMEDBY]->(b);
 MATCH (a:Primitive {id:'resource'}), (b:Primitive {id:'constraint'}) CREATE (a)-[:BOUNDEDBY]->(b);
@@ -126,6 +132,12 @@ MATCH (a:Primitive {id:'risk'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERN
 MATCH (a:Primitive {id:'risk'}), (b:Primitive {id:'evidence'}) CREATE (a)-[:EVIDENCEDBY]->(b);
 MATCH (a:Primitive {id:'role'}), (b:Primitive {id:'permission'}) CREATE (a)-[:GRANTS]->(b);
 MATCH (a:Primitive {id:'role'}), (b:Primitive {id:'identity'}) CREATE (a)-[:ASSIGNEDTO]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'identity'}) CREATE (a)-[:BINDS]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'agent'}) CREATE (a)-[:HOSTS]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'event'}) CREATE (a)-[:REMEMBERS]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'state'}) CREATE (a)-[:HOLDS]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'touchpoint'}) CREATE (a)-[:EXPOSES]->(b);
+MATCH (a:Primitive {id:'runtime'}), (b:Primitive {id:'objective'}) CREATE (a)-[:GUARANTEES]->(b);
 MATCH (a:Primitive {id:'schema'}), (b:Primitive {id:'thing'}) CREATE (a)-[:BASEDONCLASS]->(b);
 MATCH (a:Primitive {id:'schema'}), (b:Primitive {id:'fieldgroup'}) CREATE (a)-[:INCLUDESFIELDGROUP]->(b);
 MATCH (a:Primitive {id:'schema'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
@@ -145,3 +157,10 @@ MATCH (a:Primitive {id:'tenant'}), (b:Primitive {id:'resource'}) CREATE (a)-[:OW
 MATCH (a:Primitive {id:'tenant'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
 MATCH (a:Primitive {id:'thing'}), (b:Primitive {id:'thing'}) CREATE (a)-[:RELATEDTO]->(b);
 MATCH (a:Primitive {id:'time'}), (b:Primitive {id:'constraint'}) CREATE (a)-[:SCOPES]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'protocol'}) CREATE (a)-[:SPEAKS]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'capability'}) CREATE (a)-[:EXPOSEDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'thing'}) CREATE (a)-[:CONNECTS]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'credential'}) CREATE (a)-[:SECUREDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'policy'}) CREATE (a)-[:GOVERNEDBY]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'event'}) CREATE (a)-[:EMITS]->(b);
+MATCH (a:Primitive {id:'touchpoint'}), (b:Primitive {id:'location'}) CREATE (a)-[:LOCATEDAT]->(b);

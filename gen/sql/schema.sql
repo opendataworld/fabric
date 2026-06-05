@@ -192,6 +192,15 @@ CREATE TABLE IF NOT EXISTS product (
     status TEXT
 );
 
+CREATE TABLE IF NOT EXISTS protocol (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    version TEXT,
+    format TEXT,
+    spec TEXT,
+    status TEXT
+);
+
 CREATE TABLE IF NOT EXISTS relationship (
     id TEXT PRIMARY KEY NOT NULL,
     predicate TEXT NOT NULL,
@@ -224,6 +233,12 @@ CREATE TABLE IF NOT EXISTS risk (
 CREATE TABLE IF NOT EXISTS role (
     id TEXT PRIMARY KEY NOT NULL,
     name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS runtime (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    version TEXT
 );
 
 CREATE TABLE IF NOT EXISTS schema (
@@ -281,4 +296,15 @@ CREATE TABLE IF NOT EXISTS time (
     end TIMESTAMPTZ,
     duration TEXT,
     timezone TEXT
+);
+
+CREATE TABLE IF NOT EXISTS touchpoint (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    surface TEXT NOT NULL,
+    protocol TEXT NOT NULL,
+    format TEXT,
+    direction TEXT,
+    endpoint TEXT,
+    protocolVersion TEXT
 );

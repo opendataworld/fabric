@@ -1,0 +1,2617 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "fabric": "https://opendataworld.org/fabric/vocab#",
+    "capability": "fabric:Capability",
+    "constraint": "fabric:Constraint",
+    "event": "fabric:Event",
+    "evidence": "fabric:Evidence",
+    "identity": "fabric:Identity",
+    "did": "https://www.w3.org/ns/did#",
+    "geo": "http://www.opengis.net/ont/geosparql#",
+    "objective": "fabric:Objective",
+    "policy": "fabric:Policy",
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "protocol": "fabric:Protocol",
+    "rel": "fabric:Relationship",
+    "resource": "fabric:Resource",
+    "risk": "fabric:Risk",
+    "runtime": "fabric:Runtime",
+    "state": "fabric:State",
+    "@vocab": "https://opendataworld.org/fabric/vocab#",
+    "time": "http://www.w3.org/2006/time#",
+    "touchpoint": "fabric:Touchpoint"
+  },
+  "@graph": [
+    {
+      "@id": "fabric:primitive:account",
+      "@type": "schema:Thing",
+      "rdfs:label": "Account",
+      "rdfs:comment": "Which provider account is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:account.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:account.provider",
+          "rdfs:label": "provider",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:account.provider_sub",
+          "rdfs:label": "provider_sub",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:account.email",
+          "rdfs:label": "email",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:account.username",
+          "rdfs:label": "username",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:ownedby",
+          "rdfs:label": "ownedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:fromsource",
+          "rdfs:label": "fromSource",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:source"
+          }
+        },
+        {
+          "@id": "fabric:linkedto",
+          "rdfs:label": "linkedTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:account"
+          }
+        },
+        {
+          "@id": "fabric:hassession",
+          "rdfs:label": "hasSession",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:session"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:agent",
+      "@type": "schema:SoftwareApplication",
+      "rdfs:label": "Agent",
+      "rdfs:comment": "What autonomous actor is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/SoftwareApplication"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:agent.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:agent.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:executes",
+          "rdfs:label": "executes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:pursues",
+          "rdfs:label": "pursues",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:hasmemory",
+          "rdfs:label": "hasMemory",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:guards",
+          "rdfs:label": "guards",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:touchpoint"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:application",
+      "@type": "schema:SoftwareApplication",
+      "rdfs:label": "Application",
+      "rdfs:comment": "What registered app authenticates here?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/SoftwareApplication"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:application.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:application.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:application.clientId",
+          "rdfs:label": "clientId",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:authenticates",
+          "rdfs:label": "authenticates",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:account"
+          }
+        },
+        {
+          "@id": "fabric:registeredin",
+          "rdfs:label": "registeredIn",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:tenant"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:capability",
+      "@type": "schema:Action",
+      "rdfs:label": "Capability",
+      "rdfs:comment": "What can this thing do?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Action"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:capability.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:capability.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:capability.verb",
+          "rdfs:label": "verb",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:capability.inputs",
+          "rdfs:label": "inputs",
+          "fabric:dataType": "list<param>",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:capability.outputs",
+          "rdfs:label": "outputs",
+          "fabric:dataType": "list<param>",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:capability.requiresTools",
+          "rdfs:label": "requiresTools",
+          "fabric:dataType": "list<ref>",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:capability.requiresResources",
+          "rdfs:label": "requiresResources",
+          "fabric:dataType": "list<ref>",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:capability.maturity",
+          "rdfs:label": "maturity",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:heldby",
+          "rdfs:label": "heldBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:constrainedby",
+          "rdfs:label": "constrainedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:servesobjective",
+          "rdfs:label": "servesObjective",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:connector",
+      "@type": "schema:SoftwareApplication",
+      "rdfs:label": "Connector",
+      "rdfs:comment": "How is a source integrated?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/SoftwareApplication"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:connector.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:connector.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:integrates",
+          "rdfs:label": "integrates",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:source"
+          }
+        },
+        {
+          "@id": "fabric:implements",
+          "rdfs:label": "implements",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:consent",
+      "@type": "schema:Thing",
+      "rdfs:label": "Consent",
+      "rdfs:comment": "What was permitted by whom?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:consent.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:consent.purpose",
+          "rdfs:label": "purpose",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:consent.granted",
+          "rdfs:label": "granted",
+          "fabric:dataType": "boolean",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:grantedby",
+          "rdfs:label": "grantedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:coversdata",
+          "rdfs:label": "coversData",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:dataset"
+          }
+        },
+        {
+          "@id": "fabric:enforcedby",
+          "rdfs:label": "enforcedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:constraint",
+      "@type": "schema:PropertyValueSpecification",
+      "rdfs:label": "Constraint",
+      "rdfs:comment": "What must hold or is forbidden?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/PropertyValueSpecification"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:constraint.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:constraint.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:constraint.expression",
+          "rdfs:label": "expression",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:constraint.target",
+          "rdfs:label": "target",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:constraint.severity",
+          "rdfs:label": "severity",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:constraint.onViolation",
+          "rdfs:label": "onViolation",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:composesinto",
+          "rdfs:label": "composesInto",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:limits",
+          "rdfs:label": "limits",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:control",
+      "@type": "schema:Thing",
+      "rdfs:label": "Control",
+      "rdfs:comment": "What enforced safeguard is in place?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:control.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:control.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:enforces",
+          "rdfs:label": "enforces",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:mitigates",
+          "rdfs:label": "mitigates",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:risk"
+          }
+        },
+        {
+          "@id": "fabric:evidencedby",
+          "rdfs:label": "evidencedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:evidence"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:credential",
+      "@type": "schema:CreativeWork",
+      "rdfs:label": "Credential",
+      "rdfs:comment": "What is verifiably asserted about an identity?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/CreativeWork"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:credential.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:credential.type",
+          "rdfs:label": "type",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:credential.claim",
+          "rdfs:label": "claim",
+          "fabric:dataType": "map",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:credential.proof",
+          "rdfs:label": "proof",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:assertedabout",
+          "rdfs:label": "assertedAbout",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:issuedby",
+          "rdfs:label": "issuedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:evidencedby",
+          "rdfs:label": "evidencedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:evidence"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:datatype",
+      "@type": "schema:StructuredValue",
+      "rdfs:label": "Data Type",
+      "rdfs:comment": "What reusable structure does this field hold?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/StructuredValue"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:data_type.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:data_type.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:data_type.fields",
+          "rdfs:label": "fields",
+          "fabric:dataType": "list<param>",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:usedby",
+          "rdfs:label": "usedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:fieldgroup"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:dataset",
+      "@type": "schema:Dataset",
+      "rdfs:label": "Dataset",
+      "rdfs:comment": "What collection of data is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Dataset"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:dataset.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:dataset.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:dataset.format",
+          "rdfs:label": "format",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:conformsto",
+          "rdfs:label": "conformsTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:schema"
+          }
+        },
+        {
+          "@id": "fabric:derivedfrom",
+          "rdfs:label": "derivedFrom",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:source"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:hasstate",
+          "rdfs:label": "hasState",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:device",
+      "@type": "schema:Thing",
+      "rdfs:label": "Device",
+      "rdfs:comment": "What endpoint was used?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:device.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:device.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:device.fingerprint",
+          "rdfs:label": "fingerprint",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:usedby",
+          "rdfs:label": "usedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:locatedat",
+          "rdfs:label": "locatedAt",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:location"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:event",
+      "@type": "schema:Event",
+      "rdfs:label": "Event",
+      "rdfs:comment": "What happened?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Event"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:event.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:event.type",
+          "rdfs:label": "type",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:event.occurredAt",
+          "rdfs:label": "occurredAt",
+          "fabric:dataType": "datetime",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:startDate"
+          }
+        },
+        {
+          "@id": "fabric:event.actor",
+          "rdfs:label": "actor",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:event.subject",
+          "rdfs:label": "subject",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:event.location",
+          "rdfs:label": "location",
+          "fabric:dataType": "ref",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:location"
+          }
+        },
+        {
+          "@id": "fabric:event.payload",
+          "rdfs:label": "payload",
+          "fabric:dataType": "map",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:records",
+          "rdfs:label": "records",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:triggers",
+          "rdfs:label": "triggers",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:evidence",
+      "@type": "schema:CreativeWork",
+      "rdfs:label": "Evidence",
+      "rdfs:comment": "What proves this is true?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/CreativeWork"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:evidence.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:evidence.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:evidence.claim",
+          "rdfs:label": "claim",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:evidence.source",
+          "rdfs:label": "source",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:evidence.uri",
+          "rdfs:label": "uri",
+          "fabric:dataType": "uri",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:evidence.hash",
+          "rdfs:label": "hash",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:evidence.collectedAt",
+          "rdfs:label": "collectedAt",
+          "fabric:dataType": "datetime",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:substantiates",
+          "rdfs:label": "substantiates",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        },
+        {
+          "@id": "fabric:derivedfrom",
+          "rdfs:label": "derivedFrom",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:supports",
+          "rdfs:label": "supports",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:feature",
+      "@type": "schema:Thing",
+      "rdfs:label": "Feature",
+      "rdfs:comment": "What product capability is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:feature.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:feature.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:feature.status",
+          "rdfs:label": "status",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:partof",
+          "rdfs:label": "partOf",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:product"
+          }
+        },
+        {
+          "@id": "fabric:realizes",
+          "rdfs:label": "realizes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:hasstate",
+          "rdfs:label": "hasState",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:fieldgroup",
+      "@type": "schema:Thing",
+      "rdfs:label": "Field Group",
+      "rdfs:comment": "Which reusable set of fields extends a class?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:field_group.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:field_group.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:field_group.fields",
+          "rdfs:label": "fields",
+          "fabric:dataType": "list<param>",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:usesdatatype",
+          "rdfs:label": "usesDataType",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:datatype"
+          }
+        },
+        {
+          "@id": "fabric:composedinto",
+          "rdfs:label": "composedInto",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:schema"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:group",
+      "@type": "schema:Organization",
+      "rdfs:label": "Group",
+      "rdfs:comment": "Which identities are grouped together?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Organization"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:group.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:group.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:contains",
+          "rdfs:label": "contains",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:hasrole",
+          "rdfs:label": "hasRole",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:role"
+          }
+        },
+        {
+          "@id": "fabric:withintenant",
+          "rdfs:label": "withinTenant",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:tenant"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:identity",
+      "@type": "schema:Thing",
+      "rdfs:label": "Identity",
+      "rdfs:comment": "Who or what is it?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:identity.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:identity.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:identity.displayName",
+          "rdfs:label": "displayName",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:identity.controller",
+          "rdfs:label": "controller",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:identity.credentials",
+          "rdfs:label": "credentials",
+          "fabric:dataType": "list<ref>",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:holds",
+          "rdfs:label": "holds",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:subjectto",
+          "rdfs:label": "subjectTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:locatedat",
+          "rdfs:label": "locatedAt",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:location"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:journey",
+      "@type": "schema:Thing",
+      "rdfs:label": "Journey",
+      "rdfs:comment": "What path did this thing take?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:journey.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:journey.subject",
+          "rdfs:label": "subject",
+          "fabric:dataType": "ref",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:sequenceof",
+          "rdfs:label": "sequenceOf",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        },
+        {
+          "@id": "fabric:foridentity",
+          "rdfs:label": "forIdentity",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:over",
+          "rdfs:label": "over",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:time"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:location",
+      "@type": "schema:Place",
+      "rdfs:label": "Location",
+      "rdfs:comment": "Where is it?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Place"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:location.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:location.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:location.latitude",
+          "rdfs:label": "latitude",
+          "fabric:dataType": "number",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:latitude"
+          }
+        },
+        {
+          "@id": "fabric:location.longitude",
+          "rdfs:label": "longitude",
+          "fabric:dataType": "number",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:longitude"
+          }
+        },
+        {
+          "@id": "fabric:location.geometry",
+          "rdfs:label": "geometry",
+          "fabric:dataType": "geojson",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:GeoShape"
+          }
+        },
+        {
+          "@id": "fabric:location.address",
+          "rdfs:label": "address",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:address"
+          }
+        },
+        {
+          "@id": "fabric:location.uri",
+          "rdfs:label": "uri",
+          "fabric:dataType": "uri",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:url"
+          }
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:bounds",
+          "rdfs:label": "bounds",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:market",
+      "@type": "schema:Thing",
+      "rdfs:label": "Market",
+      "rdfs:comment": "What market category is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:market.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:market.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:categorizes",
+          "rdfs:label": "categorizes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:product"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:metric",
+      "@type": "schema:Observation",
+      "rdfs:label": "Metric",
+      "rdfs:comment": "What is measured?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Observation"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:metric.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:metric.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:metric.value",
+          "rdfs:label": "value",
+          "fabric:dataType": "number",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:metric.unit",
+          "rdfs:label": "unit",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:measures",
+          "rdfs:label": "measures",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        },
+        {
+          "@id": "fabric:evidencedby",
+          "rdfs:label": "evidencedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:evidence"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:objective",
+      "@type": "schema:Thing",
+      "rdfs:label": "Objective",
+      "rdfs:comment": "Why are we doing it, and how is success judged?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:objective.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:objective.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:objective.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:objective.statement",
+          "rdfs:label": "statement",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:objective.metrics",
+          "rdfs:label": "metrics",
+          "fabric:dataType": "list<metric>",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:objective.targetDate",
+          "rdfs:label": "targetDate",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:objective.priority",
+          "rdfs:label": "priority",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:objective.status",
+          "rdfs:label": "status",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:servedby",
+          "rdfs:label": "servedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:boundedby",
+          "rdfs:label": "boundedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:measuredby",
+          "rdfs:label": "measuredBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:subobjectiveof",
+          "rdfs:label": "subObjectiveOf",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:permission",
+      "@type": "schema:Thing",
+      "rdfs:label": "Permission",
+      "rdfs:comment": "What action is allowed on what?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:permission.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:permission.action",
+          "rdfs:label": "action",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:permission.effect",
+          "rdfs:label": "effect",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:permits",
+          "rdfs:label": "permits",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:over",
+          "rdfs:label": "over",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:resource"
+          }
+        },
+        {
+          "@id": "fabric:composesinto",
+          "rdfs:label": "composesInto",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:pipeline",
+      "@type": "schema:Action",
+      "rdfs:label": "Pipeline",
+      "rdfs:comment": "How does data move?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Action"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:pipeline.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:pipeline.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:pipeline.mode",
+          "rdfs:label": "mode",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:from",
+          "rdfs:label": "from",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:source"
+          }
+        },
+        {
+          "@id": "fabric:produces",
+          "rdfs:label": "produces",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:dataset"
+          }
+        },
+        {
+          "@id": "fabric:emits",
+          "rdfs:label": "emits",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:policy",
+      "@type": "schema:DigitalDocument",
+      "rdfs:label": "Policy",
+      "rdfs:comment": "What is allowed, and under what conditions?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/DigitalDocument"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:policy.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:policy.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:policy.effect",
+          "rdfs:label": "effect",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:policy.combine",
+          "rdfs:label": "combine",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:policy.constraints",
+          "rdfs:label": "constraints",
+          "fabric:dataType": "list<ref>",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:policy.scope",
+          "rdfs:label": "scope",
+          "fabric:dataType": "map",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:policy.precedence",
+          "rdfs:label": "precedence",
+          "fabric:dataType": "integer",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:policy.owner",
+          "rdfs:label": "owner",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:composedof",
+          "rdfs:label": "composedOf",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:governs",
+          "rdfs:label": "governs",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:appliesto",
+          "rdfs:label": "appliesTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:product",
+      "@type": "schema:Product",
+      "rdfs:label": "Product",
+      "rdfs:comment": "What packaged offering is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Product"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:product.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:product.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:product.status",
+          "rdfs:label": "status",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:packages",
+          "rdfs:label": "packages",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:addresses",
+          "rdfs:label": "addresses",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:market"
+          }
+        },
+        {
+          "@id": "fabric:hasstate",
+          "rdfs:label": "hasState",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:protocol",
+      "@type": "schema:CreativeWork",
+      "rdfs:label": "Protocol",
+      "rdfs:comment": "What are the rules of exchange?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/CreativeWork"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:protocol.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:protocol.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:protocol.version",
+          "rdfs:label": "version",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:version"
+          }
+        },
+        {
+          "@id": "fabric:protocol.format",
+          "rdfs:label": "format",
+          "fabric:dataType": "enum",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:encodingFormat"
+          }
+        },
+        {
+          "@id": "fabric:protocol.spec",
+          "rdfs:label": "spec",
+          "fabric:dataType": "uri",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:url"
+          }
+        },
+        {
+          "@id": "fabric:protocol.status",
+          "rdfs:label": "status",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:carries",
+          "rdfs:label": "carries",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:schema"
+          }
+        },
+        {
+          "@id": "fabric:specifiedby",
+          "rdfs:label": "specifiedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:evidence"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:relationship",
+      "@type": "schema:Role",
+      "rdfs:label": "Relationship",
+      "rdfs:comment": "How are things connected?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Role"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:relationship.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:relationship.predicate",
+          "rdfs:label": "predicate",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:relationship.source",
+          "rdfs:label": "source",
+          "fabric:dataType": "ref",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:relationship.target",
+          "rdfs:label": "target",
+          "fabric:dataType": "ref",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:relationship.directed",
+          "rdfs:label": "directed",
+          "fabric:dataType": "boolean",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:relationship.validDuring",
+          "rdfs:label": "validDuring",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:relationship.weight",
+          "rdfs:label": "weight",
+          "fabric:dataType": "number",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:connects",
+          "rdfs:label": "connects",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:resource",
+      "@type": "schema:Thing",
+      "rdfs:label": "Resource",
+      "rdfs:comment": "What is consumed, allocated, or required?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:resource.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:resource.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:resource.unit",
+          "rdfs:label": "unit",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:resource.capacity",
+          "rdfs:label": "capacity",
+          "fabric:dataType": "number",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:resource.consumed",
+          "rdfs:label": "consumed",
+          "fabric:dataType": "number",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:resource.owner",
+          "rdfs:label": "owner",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:consumedby",
+          "rdfs:label": "consumedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:boundedby",
+          "rdfs:label": "boundedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:ownedby",
+          "rdfs:label": "ownedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:risk",
+      "@type": "schema:Thing",
+      "rdfs:label": "Risk",
+      "rdfs:comment": "What could go wrong, and how bad?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:risk.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:risk.category",
+          "rdfs:label": "category",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:risk.statement",
+          "rdfs:label": "statement",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:risk.likelihood",
+          "rdfs:label": "likelihood",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:risk.impact",
+          "rdfs:label": "impact",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:risk.severity",
+          "rdfs:label": "severity",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:risk.status",
+          "rdfs:label": "status",
+          "fabric:dataType": "ref",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:threatens",
+          "rdfs:label": "threatens",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        },
+        {
+          "@id": "fabric:mitigatedby",
+          "rdfs:label": "mitigatedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:evidencedby",
+          "rdfs:label": "evidencedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:evidence"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:role",
+      "@type": "schema:Role",
+      "rdfs:label": "Role",
+      "rdfs:comment": "What set of permissions is granted?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Role"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:role.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:role.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:grants",
+          "rdfs:label": "grants",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:permission"
+          }
+        },
+        {
+          "@id": "fabric:assignedto",
+          "rdfs:label": "assignedTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:runtime",
+      "@type": "schema:SoftwareApplication",
+      "rdfs:label": "Runtime",
+      "rdfs:comment": "What executes, remembers, and responds?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/SoftwareApplication"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:runtime.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:runtime.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:runtime.version",
+          "rdfs:label": "version",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:softwareVersion"
+          }
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:binds",
+          "rdfs:label": "binds",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:hosts",
+          "rdfs:label": "hosts",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:agent"
+          }
+        },
+        {
+          "@id": "fabric:remembers",
+          "rdfs:label": "remembers",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:holds",
+          "rdfs:label": "holds",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:state"
+          }
+        },
+        {
+          "@id": "fabric:exposes",
+          "rdfs:label": "exposes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:touchpoint"
+          }
+        },
+        {
+          "@id": "fabric:guarantees",
+          "rdfs:label": "guarantees",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:schema",
+      "@type": "schema:Thing",
+      "rdfs:label": "Schema",
+      "rdfs:comment": "How is this entity's structure composed?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:schema.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:schema.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:schema.baseClass",
+          "rdfs:label": "baseClass",
+          "fabric:dataType": "ref",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:basedonclass",
+          "rdfs:label": "basedOnClass",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        },
+        {
+          "@id": "fabric:includesfieldgroup",
+          "rdfs:label": "includesFieldGroup",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:fieldgroup"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:session",
+      "@type": "schema:Thing",
+      "rdfs:label": "Session",
+      "rdfs:comment": "When and how was access established?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:session.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:session.started",
+          "rdfs:label": "started",
+          "fabric:dataType": "datetime",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:session.ip",
+          "rdfs:label": "ip",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:foraccount",
+          "rdfs:label": "forAccount",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:account"
+          }
+        },
+        {
+          "@id": "fabric:ondevice",
+          "rdfs:label": "onDevice",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:device"
+          }
+        },
+        {
+          "@id": "fabric:during",
+          "rdfs:label": "during",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:time"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:solution",
+      "@type": "schema:Service",
+      "rdfs:label": "Solution",
+      "rdfs:comment": "What outcome does this compose?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Service"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:solution.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:solution.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:composes",
+          "rdfs:label": "composes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:product"
+          }
+        },
+        {
+          "@id": "fabric:addresses",
+          "rdfs:label": "addresses",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:market"
+          }
+        },
+        {
+          "@id": "fabric:servesobjective",
+          "rdfs:label": "servesObjective",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:objective"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:source",
+      "@type": "schema:Thing",
+      "rdfs:label": "Source",
+      "rdfs:comment": "Where does this data or account come from?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:source.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:source.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:source.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:source.endpoint",
+          "rdfs:label": "endpoint",
+          "fabric:dataType": "uri",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:provides",
+          "rdfs:label": "provides",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:account"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:locatedat",
+          "rdfs:label": "locatedAt",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:location"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:state",
+      "@type": "schema:ActionStatusType",
+      "rdfs:label": "State",
+      "rdfs:comment": "What condition is it in now?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/ActionStatusType"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:state.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:state.subject",
+          "rdfs:label": "subject",
+          "fabric:dataType": "ref",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:state.value",
+          "rdfs:label": "value",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:state.lifecycle",
+          "rdfs:label": "lifecycle",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:state.since",
+          "rdfs:label": "since",
+          "fabric:dataType": "datetime",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:dateModified"
+          }
+        },
+        {
+          "@id": "fabric:state.allowedTransitions",
+          "rdfs:label": "allowedTransitions",
+          "fabric:dataType": "list<string>",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:advancedby",
+          "rdfs:label": "advancedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:gatedby",
+          "rdfs:label": "gatedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:tenant",
+      "@type": "schema:Organization",
+      "rdfs:label": "Tenant",
+      "rdfs:comment": "Whose isolated space is this?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Organization"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:tenant.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:tenant.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:isolates",
+          "rdfs:label": "isolates",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:identity"
+          }
+        },
+        {
+          "@id": "fabric:owns",
+          "rdfs:label": "owns",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:resource"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:thing",
+      "@type": "schema:Thing",
+      "rdfs:label": "Thing",
+      "rdfs:comment": "What is it?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/Thing"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:thing.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:thing.type",
+          "rdfs:label": "type",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "@type"
+          }
+        },
+        {
+          "@id": "fabric:thing.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:thing.description",
+          "rdfs:label": "description",
+          "fabric:dataType": "string",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:description"
+          }
+        },
+        {
+          "@id": "fabric:thing.createdAt",
+          "rdfs:label": "createdAt",
+          "fabric:dataType": "datetime",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:dateCreated"
+          }
+        },
+        {
+          "@id": "fabric:thing.metadata",
+          "rdfs:label": "metadata",
+          "fabric:dataType": "map",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:relatedto",
+          "rdfs:label": "relatedTo",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:time",
+      "@type": "schema:DateTime",
+      "rdfs:label": "Time",
+      "rdfs:comment": "When does it occur or apply?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/DateTime"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:time.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:time.kind",
+          "rdfs:label": "kind",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:time.instant",
+          "rdfs:label": "instant",
+          "fabric:dataType": "datetime",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:DateTime"
+          }
+        },
+        {
+          "@id": "fabric:time.start",
+          "rdfs:label": "start",
+          "fabric:dataType": "datetime",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:startDate"
+          }
+        },
+        {
+          "@id": "fabric:time.end",
+          "rdfs:label": "end",
+          "fabric:dataType": "datetime",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:endDate"
+          }
+        },
+        {
+          "@id": "fabric:time.duration",
+          "rdfs:label": "duration",
+          "fabric:dataType": "iso8601-duration",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:Duration"
+          }
+        },
+        {
+          "@id": "fabric:time.timezone",
+          "rdfs:label": "timezone",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:scopes",
+          "rdfs:label": "scopes",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:constraint"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "fabric:primitive:touchpoint",
+      "@type": "schema:EntryPoint",
+      "rdfs:label": "Touchpoint",
+      "rdfs:comment": "Where and how do things interact?",
+      "schema:sameAs": {
+        "@id": "https://schema.org/EntryPoint"
+      },
+      "fabric:attribute": [
+        {
+          "@id": "fabric:touchpoint.id",
+          "rdfs:label": "id",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:identifier"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.name",
+          "rdfs:label": "name",
+          "fabric:dataType": "string",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:name"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.surface",
+          "rdfs:label": "surface",
+          "fabric:dataType": "enum",
+          "fabric:required": true,
+          "schema:sameAs": {
+            "@id": "schema:actionPlatform"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.protocol",
+          "rdfs:label": "protocol",
+          "fabric:dataType": "enum",
+          "fabric:required": true
+        },
+        {
+          "@id": "fabric:touchpoint.format",
+          "rdfs:label": "format",
+          "fabric:dataType": "enum",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:encodingFormat"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.direction",
+          "rdfs:label": "direction",
+          "fabric:dataType": "enum",
+          "fabric:required": false
+        },
+        {
+          "@id": "fabric:touchpoint.endpoint",
+          "rdfs:label": "endpoint",
+          "fabric:dataType": "uri",
+          "fabric:required": false,
+          "schema:sameAs": {
+            "@id": "schema:urlTemplate"
+          }
+        },
+        {
+          "@id": "fabric:touchpoint.protocolVersion",
+          "rdfs:label": "protocolVersion",
+          "fabric:dataType": "string",
+          "fabric:required": false
+        }
+      ],
+      "fabric:relationship": [
+        {
+          "@id": "fabric:speaks",
+          "rdfs:label": "speaks",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:protocol"
+          }
+        },
+        {
+          "@id": "fabric:exposedby",
+          "rdfs:label": "exposedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:capability"
+          }
+        },
+        {
+          "@id": "fabric:connects",
+          "rdfs:label": "connects",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:thing"
+          }
+        },
+        {
+          "@id": "fabric:securedby",
+          "rdfs:label": "securedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:credential"
+          }
+        },
+        {
+          "@id": "fabric:governedby",
+          "rdfs:label": "governedBy",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:policy"
+          }
+        },
+        {
+          "@id": "fabric:emits",
+          "rdfs:label": "emits",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:event"
+          }
+        },
+        {
+          "@id": "fabric:locatedat",
+          "rdfs:label": "locatedAt",
+          "schema:rangeIncludes": {
+            "@id": "fabric:primitive:location"
+          }
+        }
+      ]
+    }
+  ]
+}

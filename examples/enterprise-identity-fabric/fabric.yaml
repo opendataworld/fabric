@@ -1,0 +1,53 @@
+# Example: the Enterprise Identity Fabric Agent — a REAL agent that resolves any
+# identifier into one unified identity graph, traversing linked accounts across
+# social providers and corporate SSO/IdP. Each provider is a heterogeneous
+# boundary, so each is a Touchpoint speaking its own Protocol (OIDC/SAML/SCIM),
+# bound by a protocol sidecar into the one ambiguity-free agent language.
+#
+#   python tools/fabric.py create examples/enterprise-identity-fabric/fabric.yaml
+fabric:
+  id: "fabric:instance:enterprise-identity-fabric"
+  name: "Enterprise Identity Fabric"
+  description: >
+    Resolves a person/agent across Google, GitHub, Microsoft/Entra, Okta,
+    Auth0, etc. into a single governed Identity in the graph. Operates on the
+    identity nodes (Identity, Account, Source, Credential, Session) and guards
+    the IdP touchpoints. Path is emergent; bounded only by consent/governance.
+
+  assets:
+    # --- The agent's own identity ---
+    - { id: "did:fabric:agent:identity-fabric", type: "fabric:primitive:identity", kind: "agent", displayName: "Identity Fabric Agent" }
+
+    # --- The unified identity it produces, and the linked accounts/sources ---
+    - { id: "did:fabric:person:resolved", type: "fabric:primitive:identity", kind: "person", displayName: "Resolved Person (unified)" }
+    - { id: "source:google",    type: "fabric:primitive:source", name: "Google OAuth" }
+    - { id: "source:entra",     type: "fabric:primitive:source", name: "Microsoft Entra ID" }
+    - { id: "source:okta",      type: "fabric:primitive:source", name: "Okta" }
+    - { id: "account:google",   type: "fabric:primitive:account", source: "source:google", subject: "google-sub-123" }
+    - { id: "account:entra",    type: "fabric:primitive:account", source: "source:entra",  subject: "entra-oid-456" }
+    - { id: "rel:same-as:google", type: "fabric:primitive:relationship", predicate: "sameAs", source: "did:fabric:person:resolved", target: "account:google" }
+    - { id: "rel:same-as:entra",  type: "fabric:primitive:relationship", predicate: "sameAs", source: "did:fabric:person:resolved", target: "account:entra" }
+
+    # --- IdP boundaries: each a Touchpoint speaking its own Protocol ---
+    - { id: "protocol:oidc", type: "fabric:primitive:protocol", name: "OpenID Connect", format: "json", status: "standard", spec: "https://openid.net/specs/openid-connect-core-1_0.html" }
+    - { id: "protocol:saml", type: "fabric:primitive:protocol", name: "SAML 2.0", format: "binary", status: "standard" }
+    - { id: "protocol:scim", type: "fabric:primitive:protocol", name: "SCIM 2.0", format: "json", status: "standard" }
+    - { id: "touchpoint:idp-oidc", type: "fabric:primitive:touchpoint", name: "OIDC IdP edge", surface: "api", protocol: "oidc", direction: "inbound", speaks: ["protocol:oidc"] }
+    - { id: "touchpoint:idp-saml", type: "fabric:primitive:touchpoint", name: "SAML IdP edge", surface: "api", protocol: "saml", direction: "inbound", speaks: ["protocol:saml"] }
+    - { id: "touchpoint:scim",     type: "fabric:primitive:touchpoint", name: "SCIM provisioning edge", surface: "api", protocol: "scim", direction: "bidirectional", speaks: ["protocol:scim"] }
+
+    # --- What it does, why, and the governance ---
+    - { id: "capability:resolve-identity", type: "fabric:primitive:capability", name: "Resolve Identity", verb: "resolve" }
+    - { id: "objective:unified-identity", type: "fabric:primitive:objective", kind: "outcome", name: "One Unified Identity", statement: "Every linked account across providers resolves to a single governed Identity in the graph." }
+    - { id: "consent:identity-link", type: "fabric:primitive:consent", name: "Account Linking Consent", scope: "identity-resolution" }
+    - { id: "constraint:consent-required", type: "fabric:primitive:constraint", kind: "control", expression: "link.allowed == consent.granted", severity: "blocking" }
+    - { id: "policy:identity-governance", type: "fabric:primitive:policy", name: "Identity Governance", effect: "require-approval", constraints: ["constraint:consent-required"] }
+
+    # --- The agent: resolves identity, guards every IdP touchpoint ---
+    - id: "agent:identity-fabric"
+      type: "fabric:primitive:agent"
+      name: "Enterprise Identity Fabric Agent"
+      executes: ["capability:resolve-identity"]
+      pursues: ["objective:unified-identity"]
+      governedBy: ["policy:identity-governance"]
+      guards: ["touchpoint:idp-oidc", "touchpoint:idp-saml", "touchpoint:scim"]

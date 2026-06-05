@@ -1,0 +1,70 @@
+# Example: a REAL agent — the Edge Guardian.
+#
+# Not a primitive (those are the type definitions); this is a concrete instance
+# whose JOB is to prevent data leakage, operating at the EDGE of the platform —
+# on the Touchpoints where data crosses a boundary. It sits beside the
+# protocol sidecar and inspects what leaves.
+#
+#   python tools/fabric.py create examples/edge-guardian/fabric.yaml
+fabric:
+  id: "fabric:instance:edge-guardian"
+  name: "Edge Guardian"
+  description: >
+    A leak-protection agent that operates on the platform edge. It guards the
+    outbound Touchpoints, enforces a no-leak Policy, and acts on the graph
+    (the core runtime) — never inside core logic, always at the boundary.
+
+  assets:
+    # --- Identity of the agent ---
+    - id: "did:fabric:agent:edge-guardian"
+      type: "fabric:primitive:identity"
+      kind: "agent"
+      displayName: "Edge Guardian"
+
+    # --- The edge it operates on: an outbound Touchpoint + its Protocol ---
+    - id: "protocol:edge:https-json"
+      type: "fabric:primitive:protocol"
+      name: "HTTPS/JSON egress"
+      version: "HTTP/2"
+      format: "json"
+      status: "standard"
+    - id: "touchpoint:edge:public-egress"
+      type: "fabric:primitive:touchpoint"
+      name: "Public egress edge"
+      surface: "api"
+      protocol: "https"
+      direction: "outbound"
+      endpoint: "https://api.example.com/v1"
+      speaks: ["protocol:edge:https-json"]
+
+    # --- What "no leak" means: constraint + policy ---
+    - id: "constraint:edge:no-pii-egress"
+      type: "fabric:primitive:constraint"
+      kind: "data"
+      expression: "payload.classification != 'pii' || egress.allowed == true"
+      severity: "blocking"
+    - id: "policy:edge:no-leak"
+      type: "fabric:primitive:policy"
+      name: "No-Leak Egress Policy"
+      effect: "block"
+      constraints: ["constraint:edge:no-pii-egress"]
+
+    # --- The capability it executes and the objective it pursues ---
+    - id: "capability:edge:inspect-redact"
+      type: "fabric:primitive:capability"
+      name: "Inspect & Redact at Boundary"
+      verb: "protect"
+    - id: "objective:edge:zero-leakage"
+      type: "fabric:primitive:objective"
+      name: "Zero Data Leakage"
+      kind: "outcome"
+      statement: "No classified data crosses an outbound boundary unless explicitly allowed."
+
+    # --- The agent itself: executes/pursues/governedBy, and GUARDS the edge ---
+    - id: "agent:edge-guardian"
+      type: "fabric:primitive:agent"
+      name: "Edge Guardian"
+      executes: ["capability:edge:inspect-redact"]
+      pursues: ["objective:edge:zero-leakage"]
+      governedBy: ["policy:edge:no-leak"]
+      guards: ["touchpoint:edge:public-egress"]

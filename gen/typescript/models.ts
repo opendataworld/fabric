@@ -219,6 +219,16 @@ export interface Product {
   status?: string;
 }
 
+/** What are the rules of exchange?  (fabric:primitive:protocol) */
+export interface Protocol {
+  id: string;
+  name: string;
+  version?: string;
+  format?: string;
+  spec?: string;
+  status?: string;
+}
+
 /** How are things connected?  (fabric:primitive:relationship) */
 export interface Relationship {
   id: string;
@@ -255,6 +265,13 @@ export interface Risk {
 export interface Role {
   id: string;
   name: string;
+}
+
+/** What executes, remembers, and responds?  (fabric:primitive:runtime) */
+export interface Runtime {
+  id: string;
+  name: string;
+  version?: string;
 }
 
 /** How is this entity's structure composed?  (fabric:primitive:schema) */
@@ -320,4 +337,16 @@ export interface Time {
   end?: string;
   duration?: string;
   timezone?: string;
+}
+
+/** Where and how do things interact?  (fabric:primitive:touchpoint) */
+export interface Touchpoint {
+  id: string;
+  name: string;
+  surface: string;
+  protocol: string;
+  format?: string;
+  direction?: string;
+  endpoint?: string;
+  protocolVersion?: string;
 }

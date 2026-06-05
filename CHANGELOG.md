@@ -3,6 +3,23 @@
 All notable changes to OpenDataWorld Fabric are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+- **Fabric Runtime** (`runtime/`) — a Go multi-model graph runtime (documents +
+  typed graph edges in one in-memory engine) seeded self-describingly from the
+  canonical model, exposed over a **GraphQL** API with an embedded explorer.
+  Durable append-only log, `signup`/`createRecord`/`relate` mutations,
+  `resolve`/`traverse` queries. The runnable Go sibling to the Rust `fabric-db`
+  scaffold. Tests + `--selftest` passing; deps vendored for offline builds.
+- **Agent-native fabric** — agents are first-class governed actors in the same
+  graph (`registerAgent`/`agentAct`, wiring the canonical Agent primitive's
+  executes/pursues/governedBy/hasMemory edges; every action audited as an
+  Event). The runtime also speaks **MCP** over stdio (`runtime --mcp`),
+  exposing 11 tools so any MCP-capable agent can operate the fabric directly.
+- **Go CI** (`.github/workflows/go.yml`) — gofmt/vet/test/build/selftest for
+  the runtime.
+
 ## [0.1.0-alpha] — 2026-06-03
 
 First alpha. **Alpha means: the model, generators, API, and identity connectors

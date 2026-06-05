@@ -93,6 +93,12 @@ SQL = {
     "datetime": "TIMESTAMPTZ", "number": "DOUBLE PRECISION", "integer": "INTEGER",
     "boolean": "BOOLEAN", "map": "JSONB",
 }
+SURREAL = {  # SurrealQL field types
+    "string": "string", "uri": "string", "iso8601-duration": "string", "geojson": "object",
+    "ref": "record", "enum": "string", "param": "object", "metric": "object",
+    "datetime": "datetime", "number": "number", "integer": "int",
+    "boolean": "bool", "map": "object",
+}
 
 
 # ── generators ──────────────────────────────────────────────────────────────────
@@ -189,10 +195,19 @@ def short(pid: str) -> str:
 def gen_graph_surql(prims: list[dict]) -> str:
     id2table = {p["id"]: _table(p["name"]) for p in prims}
     out = ["-- Graph schema generated from Fabric primitives — DO NOT EDIT BY HAND.",
-           "-- Nodes = primitives; edges = RELATION tables from each relationship.", ""]
+           "-- Nodes = primitives (fully expanded with fields); edges = RELATION tables.", ""]
     for p in prims:
-        out.append(f"DEFINE TABLE {id2table[p['id']]} SCHEMAFULL;")
-    out.append("")
+        tbl = id2table[p["id"]]
+        out.append(f"DEFINE TABLE {tbl} SCHEMAFULL;")
+        for a in attrs(p):
+            if a["name"] == "id":  # SurrealDB manages the record id itself
+                continue
+            base = SURREAL.get(_base(a["type"]), "string")
+            ty = f"array<{base}>" if _is_list(a["type"]) else base
+            if not a.get("required"):
+                ty = f"option<{ty}>"
+            out.append(f"DEFINE FIELD {a['name']} ON TABLE {tbl} TYPE {ty};")
+        out.append("")
     out.append("-- Relationship edges")
     for p in prims:
         src = id2table[p["id"]]
@@ -251,6 +266,50 @@ def gen_model_json(prims: list[dict]) -> dict:
     return {"classes": classes, "nodes": nodes, "edges": edges}
 
 
+def gen_jsonld(prims: list[dict]) -> dict:
+    """All nodes as a schema.org-aligned JSON-LD @graph (the model as linked data)."""
+    known = {p["id"] for p in prims}
+    ctx = {
+        "schema": "https://schema.org/",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "fabric": "https://opendataworld.io/fabric#",
+    }
+    for p in prims:  # merge each primitive's declared JSON-LD context terms
+        ctx.update(p.get("jsonldContext", {}) or {})
+
+    graph = []
+    for p in prims:
+        so = p.get("schemaOrg", {}) or {}
+        node = {
+            "@id": p["id"],
+            "@type": so.get("type", "rdfs:Class"),
+            "rdfs:label": p["name"],
+            "rdfs:comment": p.get("question") or p.get("description", ""),
+        }
+        if so.get("url"):
+            node["schema:sameAs"] = {"@id": so["url"]}
+        props = []
+        for a in attrs(p):
+            prop = {
+                "@id": f"fabric:{_table(p['name'])}.{a['name']}",
+                "rdfs:label": a["name"],
+                "fabric:dataType": a["type"],
+                "fabric:required": bool(a.get("required")),
+            }
+            if a.get("schemaOrg"):
+                prop["schema:sameAs"] = {"@id": a["schemaOrg"]}
+            props.append(prop)
+        if props:
+            node["fabric:attribute"] = props
+        rels = [{"@id": f"fabric:{_table(r['name'])}", "rdfs:label": r["name"],
+                 "schema:rangeIncludes": {"@id": r["target"]}}
+                for r in p.get("relationships", []) if r["target"] in known]
+        if rels:
+            node["fabric:relationship"] = rels
+        graph.append(node)
+    return {"@context": ctx, "@graph": graph}
+
+
 def graph_fit_report(prims: list[dict]) -> tuple[int, int, list[str]]:
     """Returns (nodes, edges, dangling) — does the model fit a graph cleanly?"""
     known = {p["id"] for p in prims}
@@ -275,7 +334,7 @@ def write(path: str, content: str):
 def main():
     ap = argparse.ArgumentParser(description="Fabric data model generator")
     ap.add_argument("--target",
-                    choices=["python", "typescript", "jsonschema", "sql", "graph", "json", "all"],
+                    choices=["python", "typescript", "jsonschema", "sql", "graph", "json", "jsonld", "all"],
                     default="all")
     ap.add_argument("--out", default="gen")
     args = ap.parse_args()
@@ -300,6 +359,9 @@ def main():
         write(os.path.join(out, "graph", "schema.surql"), gen_graph_surql(prims))
         write(os.path.join(out, "graph", "model.mmd"), gen_graph_mermaid(prims))
         write(os.path.join(out, "graph", "model.cypher"), gen_graph_cypher(prims))
+    if t in ("jsonld", "all"):
+        write(os.path.join(out, "jsonld", "model.jsonld"),
+              json.dumps(gen_jsonld(prims), indent=2) + "\n")
     if t in ("json", "all"):
         model = gen_model_json(prims)
         doc = json.dumps(model, indent=2) + "\n"

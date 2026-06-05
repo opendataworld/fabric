@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opendataworld.org/fabric/schema/protocol.json",
+  "title": "Protocol",
+  "description": "A defined set of rules for exchanging data across a boundary \u2014 the contract a Touchpoint speaks. Well-known protocols (https, grpc, mcp, ...) are referenced by name; when a boundary has no existing protocol, a Protocol is DEFINED here: its message format, version, and a link to its spec/contract. This is where \"if no protocol exists, we define one\" becomes a concrete, reusable asset.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "description": "Protocol/contract version, e.g. HTTP/2, gRPC v1, MCP 2025-06."
+    },
+    "format": {
+      "type": "string",
+      "description": "Wire format: json | jsonld | protobuf | avro | csv | form | binary."
+    },
+    "spec": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to the defining spec/contract (OpenAPI, .proto, JSON Schema, RFC)."
+    },
+    "status": {
+      "type": "string",
+      "description": "standard | custom | draft \u2014 'custom' marks a protocol newly defined for an uncovered boundary."
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ]
+}

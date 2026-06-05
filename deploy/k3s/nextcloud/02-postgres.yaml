@@ -1,0 +1,96 @@
+# PostgreSQL — Nextcloud's recommended database.
+# Uses a StatefulSet with a volumeClaimTemplate bound to k3s's default
+# `local-path` StorageClass (node-local data; back it up).
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-postgres
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  clusterIP: None # headless — stable DNS for the StatefulSet pod
+  selector:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: nextcloud
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nextcloud-postgres
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  serviceName: nextcloud-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: nextcloud
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: nextcloud
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999 # postgres user in the official image
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - name: postgres
+              containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: nextcloud-db
+          env:
+            # Keep PGDATA in a subdir so the volume root (lost+found etc.)
+            # doesn't collide with initdb.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "nextcloud", "-d", "nextcloud"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "nextcloud", "-d", "nextcloud"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 10Gi

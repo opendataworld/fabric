@@ -1,0 +1,37 @@
+# Runtime — the protocol-agnostic core: graph + identity + memory + agents
+id: "fabric:primitive:runtime"
+name: "Runtime"
+version: "1.0.0"
+layer: "domain"
+question: "What executes, remembers, and responds?"
+extends: ["fabric:primitive:thing"]
+description: >
+  The core runtime. It IS the graph (the SurrealDB substrate) plus identity,
+  memory, and the agents that act on it. It executes (agents respond), remembers
+  (memory = the recorded events/state it reads back from the graph), and knows
+  (the graph is its knowledge). The runtime is protocol-agnostic: it never
+  embeds a wire protocol. All protocols attach only at the edges, as Touchpoints
+  speaking Protocols, realized by sidecar adapters.
+schemaOrg:
+  type: "schema:SoftwareApplication"
+  url: "https://schema.org/SoftwareApplication"
+  note: "The executing core application; not a generic Thing — it runs, holds state, and responds."
+jsonldContext:
+  runtime: "fabric:Runtime"
+attributes:
+  - { name: id, type: string, required: true, schemaOrg: "schema:identifier" }
+  - { name: name, type: string, required: true, schemaOrg: "schema:name" }
+  - { name: version, type: string, required: false, schemaOrg: "schema:softwareVersion" }
+relationships:
+  - { name: binds, target: "fabric:primitive:identity", cardinality: "1..*", description: "Identity is core to the runtime (who acts / is acted upon)." }
+  - { name: hosts, target: "fabric:primitive:agent", cardinality: "0..*", description: "Agents that execute and respond within the runtime." }
+  - { name: remembers, target: "fabric:primitive:event", cardinality: "0..*", description: "Memory: the recorded event history the runtime reads back." }
+  - { name: holds, target: "fabric:primitive:state", cardinality: "0..*", description: "Current state the runtime knows from the graph." }
+  - { name: exposes, target: "fabric:primitive:touchpoint", cardinality: "0..*", description: "The runtime's boundaries; each speaks a Protocol via a sidecar." }
+  - { name: guarantees, target: "fabric:primitive:objective", cardinality: "0..*", description: "The runtime contract / SLA it delivers — availability, latency, durability — as guaranteed Objectives." }
+invariants:
+  - "The runtime DELIVERS a runtime contract (SLA): the guarantees it owes, expressed as guaranteed Objectives bounded by Constraints (availability, latency, durability)."
+  - "The core runtime = graph substrate + identity + memory (events/state) + agents."
+  - "The runtime is protocol-agnostic: it MUST NOT embed any wire protocol. Protocols attach only as sidecar-realized Touchpoints at the edges."
+  - "Memory is the runtime's recorded events/state in the graph — the runtime knows by reading the graph, not by holding hidden state."
+  - "Agents host the response: the runtime executes by agents acting on the graph."

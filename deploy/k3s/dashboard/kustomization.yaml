@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Official Kubernetes Dashboard (v2.7.0), vendored as plain YAML, plus an
+# admin-user login identity. Apply with:  kubectl apply -k deploy/k3s/dashboard
+#
+# Access is intentionally NOT exposed via Ingress — a cluster-admin panel
+# should not be public. Reach it over a port-forward / SSH tunnel (see
+# install.sh and the README).
+resources:
+  - upstream-dashboard.yaml # github.com/kubernetes/dashboard v2.7.0 aio/deploy/recommended.yaml
+  - admin-user.yaml
+
+images:
+  - name: kubernetesui/dashboard
+    newTag: v2.7.0
+  - name: kubernetesui/metrics-scraper
+    newTag: v1.0.8

@@ -1,0 +1,71 @@
+{
+  "title": "CNCF Landscape — k3s Catalog",
+  "subtitle": "Cloud-native projects by CNCF category & maturity. Items running in the companion stack are marked ‘deployed’. Maturity is a snapshot — refresh from landscape.cncf.io.",
+  "categories": [
+    {
+      "name": "Orchestration & Management",
+      "items": [
+        { "name": "Kubernetes", "logo": "☸️", "description": "Container orchestration (k3s is a certified distribution).", "image": "rancher/k3s", "status": "deployed", "maturity": "graduated", "docs": "https://kubernetes.io" },
+        { "name": "etcd", "logo": "🗄️", "description": "Distributed reliable key-value store; backs the Kubernetes API.", "image": "quay.io/coreos/etcd", "status": "deployed", "maturity": "graduated", "docs": "https://etcd.io" },
+        { "name": "CoreDNS", "logo": "🌐", "description": "DNS and service discovery for the cluster.", "image": "coredns/coredns", "status": "deployed", "maturity": "graduated", "docs": "https://coredns.io" },
+        { "name": "Traefik", "logo": "🚦", "description": "k3s-bundled ingress controller / edge router.", "image": "rancher/mirrored-library-traefik", "status": "deployed", "maturity": "non-cncf", "docs": "https://traefik.io" },
+        { "name": "gRPC", "logo": "🔌", "description": "High-performance RPC framework.", "image": "", "status": "available", "maturity": "incubating", "docs": "https://grpc.io" }
+      ]
+    },
+    {
+      "name": "App Definition & Development",
+      "items": [
+        { "name": "Helm", "logo": "⎈", "description": "The package manager for Kubernetes.", "image": "alpine/helm", "status": "available", "maturity": "graduated", "docs": "https://helm.sh" },
+        { "name": "Argo", "logo": "🐙", "description": "GitOps CD, workflows, rollouts, events.", "image": "quay.io/argoproj/argocd", "status": "available", "maturity": "graduated", "docs": "https://argoproj.github.io" },
+        { "name": "Flux", "logo": "🔁", "description": "GitOps toolkit for continuous delivery.", "image": "ghcr.io/fluxcd/flux-cli", "status": "available", "maturity": "graduated", "docs": "https://fluxcd.io" },
+        { "name": "Backstage", "logo": "🏗️", "description": "Developer portal / internal platform.", "image": "", "status": "available", "maturity": "incubating", "docs": "https://backstage.io" },
+        { "name": "KEDA", "logo": "📐", "description": "Kubernetes event-driven autoscaling.", "image": "ghcr.io/kedacore/keda", "status": "available", "maturity": "graduated", "docs": "https://keda.sh" }
+      ]
+    },
+    {
+      "name": "Runtime",
+      "items": [
+        { "name": "containerd", "logo": "📦", "description": "Industry-standard container runtime (used by k3s).", "image": "", "status": "deployed", "maturity": "graduated", "docs": "https://containerd.io" },
+        { "name": "CRI-O", "logo": "🛞", "description": "Lightweight OCI runtime for Kubernetes.", "image": "", "status": "available", "maturity": "graduated", "docs": "https://cri-o.io" },
+        { "name": "Longhorn", "logo": "🐮", "description": "Distributed block storage for multi-node durability.", "image": "longhornio/longhorn-manager", "status": "available", "maturity": "incubating", "docs": "https://longhorn.io" },
+        { "name": "Rook", "logo": "♜", "description": "Storage operator (Ceph) for Kubernetes.", "image": "rook/ceph", "status": "available", "maturity": "graduated", "docs": "https://rook.io" }
+      ]
+    },
+    {
+      "name": "Provisioning & Security",
+      "items": [
+        { "name": "cert-manager", "logo": "🔐", "description": "Automated X.509 certificates (Let's Encrypt).", "image": "quay.io/jetstack/cert-manager-controller", "status": "available", "maturity": "graduated", "docs": "https://cert-manager.io" },
+        { "name": "Cilium", "logo": "🐝", "description": "eBPF networking, observability & NetworkPolicy enforcement.", "image": "quay.io/cilium/cilium", "status": "available", "maturity": "graduated", "docs": "https://cilium.io" },
+        { "name": "Falco", "logo": "🦅", "description": "Runtime security / threat detection.", "image": "falcosecurity/falco", "status": "available", "maturity": "graduated", "docs": "https://falco.org" },
+        { "name": "Open Policy Agent", "logo": "🛡️", "description": "Policy-as-code engine (Gatekeeper admission control).", "image": "openpolicyagent/opa", "status": "available", "maturity": "graduated", "docs": "https://www.openpolicyagent.org" },
+        { "name": "Harbor", "logo": "⚓", "description": "Cloud-native registry with scanning & signing.", "image": "goharbor/harbor-core", "status": "available", "maturity": "graduated", "docs": "https://goharbor.io" }
+      ]
+    },
+    {
+      "name": "Observability & Analysis",
+      "items": [
+        { "name": "Prometheus", "logo": "🔥", "description": "Metrics collection & alerting.", "image": "prom/prometheus", "status": "available", "maturity": "graduated", "docs": "https://prometheus.io" },
+        { "name": "OpenTelemetry", "logo": "🔭", "description": "Traces, metrics & logs instrumentation standard.", "image": "otel/opentelemetry-collector", "status": "available", "maturity": "graduated", "docs": "https://opentelemetry.io" },
+        { "name": "Jaeger", "logo": "🕸️", "description": "Distributed tracing.", "image": "jaegertracing/all-in-one", "status": "available", "maturity": "graduated", "docs": "https://www.jaegertracing.io" },
+        { "name": "Fluentd", "logo": "📨", "description": "Unified logging layer.", "image": "fluent/fluentd", "status": "available", "maturity": "graduated", "docs": "https://www.fluentd.org" },
+        { "name": "Grafana", "logo": "📈", "description": "Dashboards & visualization.", "image": "grafana/grafana", "status": "available", "maturity": "non-cncf", "docs": "https://grafana.com" }
+      ]
+    },
+    {
+      "name": "Service Mesh & Networking",
+      "items": [
+        { "name": "Istio", "logo": "⛵", "description": "Service mesh: traffic mgmt, security, observability.", "image": "istio/pilot", "status": "available", "maturity": "graduated", "docs": "https://istio.io" },
+        { "name": "Linkerd", "logo": "🪡", "description": "Ultralight service mesh.", "image": "", "status": "available", "maturity": "graduated", "docs": "https://linkerd.io" },
+        { "name": "Envoy", "logo": "📡", "description": "L7 proxy / data plane.", "image": "envoyproxy/envoy", "status": "available", "maturity": "graduated", "docs": "https://www.envoyproxy.io" }
+      ]
+    },
+    {
+      "name": "Application (this stack)",
+      "items": [
+        { "name": "Nextcloud", "logo": "☁️", "description": "Self-hosted content collaboration / file sync.", "image": "nextcloud:30-apache", "status": "deployed", "maturity": "non-cncf", "docs": "https://nextcloud.com" },
+        { "name": "PostgreSQL", "logo": "🐘", "description": "Primary relational datastore.", "image": "postgres:16-alpine", "status": "deployed", "maturity": "non-cncf", "docs": "https://www.postgresql.org" },
+        { "name": "Redis", "logo": "🔴", "description": "In-memory cache + transactional file locking.", "image": "redis:7-alpine", "status": "deployed", "maturity": "non-cncf", "docs": "https://redis.io" }
+      ]
+    }
+  ]
+}

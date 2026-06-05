@@ -1,0 +1,61 @@
+# Example: the core platform agent roster — REAL agents (instances), each
+# defined only on the stable core (existing primitives), each guarding a
+# Touchpoint at the edge. Companion to examples/edge-guardian.
+#
+#   python tools/fabric.py create examples/platform-agents/fabric.yaml
+fabric:
+  id: "fabric:instance:platform-agents"
+  name: "Platform Agents"
+  description: >
+    Protocol, Enterprise, and Security agents. Sidecars are agents: the Protocol
+    agent IS a protocol sidecar; the Security agent guards the edges; the
+    Enterprise agent coordinates toward the runtime SLA. All paths emergent,
+    bounded only by Policy/Constraint.
+
+  assets:
+    # ───────────────────────── Protocol Agent ─────────────────────────
+    # A protocol sidecar, realized as an agent: binds/translates at a boundary.
+    - { id: "did:fabric:agent:protocol", type: "fabric:primitive:identity", kind: "agent", displayName: "Protocol Agent" }
+    - { id: "protocol:mcp", type: "fabric:primitive:protocol", name: "Model Context Protocol", version: "2025-06", format: "json", status: "standard" }
+    - { id: "touchpoint:tool-edge", type: "fabric:primitive:touchpoint", name: "Agent-to-tool edge", surface: "tool", protocol: "mcp", direction: "bidirectional", speaks: ["protocol:mcp"] }
+    - { id: "capability:bind-translate", type: "fabric:primitive:capability", name: "Bind & Translate", verb: "translate" }
+    - { id: "objective:faithful-binding", type: "fabric:primitive:objective", kind: "outcome", name: "Faithful Binding", statement: "Translate across a boundary with no loss and no ambiguity — meaning is identical on both sides." }
+    - { id: "constraint:ambiguity-free", type: "fabric:primitive:constraint", kind: "semantic", expression: "term.meaning.count == 1", severity: "blocking" }
+    - { id: "policy:protocol-conformance", type: "fabric:primitive:policy", name: "Protocol Conformance", effect: "enforce", constraints: ["constraint:ambiguity-free"] }
+    - id: "agent:protocol"
+      type: "fabric:primitive:agent"
+      name: "Protocol Agent"
+      executes: ["capability:bind-translate"]
+      pursues: ["objective:faithful-binding"]
+      governedBy: ["policy:protocol-conformance"]
+      guards: ["touchpoint:tool-edge"]
+
+    # ──────────────────────── Enterprise Agent ────────────────────────
+    # Coordinates toward the runtime contract / SLA; org-scoped identity.
+    - { id: "did:fabric:agent:enterprise", type: "fabric:primitive:identity", kind: "organization", displayName: "Enterprise Agent" }
+    - { id: "capability:orchestrate", type: "fabric:primitive:capability", name: "Orchestrate", verb: "orchestrate" }
+    - { id: "objective:enterprise-sla", type: "fabric:primitive:objective", kind: "outcome", name: "Deliver the Runtime SLA", statement: "Keep the runtime contract: availability, latency, durability across the platform." }
+    - { id: "constraint:sla-bounds", type: "fabric:primitive:constraint", kind: "budget", expression: "availability >= 0.999 && p99_latency_ms <= 500", severity: "blocking" }
+    - { id: "policy:enterprise-governance", type: "fabric:primitive:policy", name: "Enterprise Governance", effect: "require-approval", constraints: ["constraint:sla-bounds"] }
+    - id: "agent:enterprise"
+      type: "fabric:primitive:agent"
+      name: "Enterprise Agent"
+      executes: ["capability:orchestrate"]
+      pursues: ["objective:enterprise-sla"]
+      governedBy: ["policy:enterprise-governance"]
+
+    # ───────────────────────── Security Agent ─────────────────────────
+    # Detects threats and enforces policy at the edges.
+    - { id: "did:fabric:agent:security", type: "fabric:primitive:identity", kind: "agent", displayName: "Security Agent" }
+    - { id: "touchpoint:ingress-edge", type: "fabric:primitive:touchpoint", name: "Public ingress edge", surface: "api", protocol: "https", direction: "inbound", speaks: ["protocol:mcp"] }
+    - { id: "capability:detect-enforce", type: "fabric:primitive:capability", name: "Detect & Enforce", verb: "protect" }
+    - { id: "objective:zero-breach", type: "fabric:primitive:objective", kind: "outcome", name: "Zero Breach", statement: "No unauthorized access or policy violation crosses a boundary undetected." }
+    - { id: "constraint:least-privilege", type: "fabric:primitive:constraint", kind: "control", expression: "grant == minimal_required", severity: "blocking" }
+    - { id: "policy:security", type: "fabric:primitive:policy", name: "Security Policy", effect: "block", constraints: ["constraint:least-privilege"] }
+    - id: "agent:security"
+      type: "fabric:primitive:agent"
+      name: "Security Agent"
+      executes: ["capability:detect-enforce"]
+      pursues: ["objective:zero-breach"]
+      governedBy: ["policy:security"]
+      guards: ["touchpoint:ingress-edge"]

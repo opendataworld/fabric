@@ -1,0 +1,41 @@
+# Headlamp runs with a minimal SA; users log in with their own bearer token,
+# which Headlamp forwards to the API server. `headlamp-admin` is a convenience
+# login identity (full cluster-admin — treat the token like a root password;
+# bind to `view` for read-only).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/part-of: headlamp
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: headlamp-admin
+  namespace: headlamp
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin # change to `view` for read-only
+subjects:
+  - kind: ServiceAccount
+    name: headlamp-admin
+    namespace: headlamp
+---
+# Long-lived token for the admin SA so install.sh can print a login token.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: headlamp-admin-token
+  namespace: headlamp
+  annotations:
+    kubernetes.io/service-account.name: headlamp-admin
+type: kubernetes.io/service-account-token

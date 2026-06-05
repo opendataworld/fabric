@@ -1,5 +1,6 @@
-# Proof-of-use validator — kept on disk, intentionally not committed
-tools/
+# tools/ is local-only (proof-of-use validator), EXCEPT the platform CLI
+tools/*
+!tools/fabric.py
 
 # Python
 __pycache__/
@@ -19,3 +20,8 @@ fabric-db/target/
 # Node / TypeScript
 web/node_modules/
 web/dist/
+
+# Nextcloud-on-k3s: never commit real secrets (only the *.example.yaml)
+deploy/k3s/nextcloud/01-secrets.yaml
+deploy/k3s/nextcloud/99-cert-manager.yaml
+deploy/k3s/registry/02-htpasswd.yaml

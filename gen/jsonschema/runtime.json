@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opendataworld.org/fabric/schema/runtime.json",
+  "title": "Runtime",
+  "description": "The core runtime. It IS the graph (the SurrealDB substrate) plus identity, memory, and the agents that act on it. It executes (agents respond), remembers (memory = the recorded events/state it reads back from the graph), and knows (the graph is its knowledge). The runtime is protocol-agnostic: it never embeds a wire protocol. All protocols attach only at the edges, as Touchpoints speaking Protocols, realized by sidecar adapters.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ]
+}

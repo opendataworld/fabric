@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Argo Workflows (quick-start-minimal, v3.6.2), vendored as plain YAML.
+# Apply with ./install.sh — it applies this base, waits for the CRDs to be
+# established, then applies the agent-composer WorkflowTemplate (kept out of
+# this base to avoid a CRD race on first apply).
+namespace: argo
+
+resources:
+  - upstream-argo.yaml # github.com/argoproj/argo-workflows v3.6.2 manifests/quick-start-minimal.yaml
+
+# Pin the :latest tags from upstream to a concrete release.
+images:
+  - name: quay.io/argoproj/argocli
+    newTag: v3.6.2
+  - name: quay.io/argoproj/workflow-controller
+    newTag: v3.6.2

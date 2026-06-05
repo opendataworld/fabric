@@ -1,0 +1,84 @@
+# Headlamp — lightweight CNCF Kubernetes UI. Single deployment, non-root,
+# listens on :4466. Access via port-forward (default) or the optional ingress.
+apiVersion: v1
+kind: Service
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/part-of: headlamp
+spec:
+  selector:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/part-of: headlamp
+  ports:
+    - name: http
+      port: 80
+      targetPort: 4466
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/part-of: headlamp
+    app.kubernetes.io/component: ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: headlamp
+      app.kubernetes.io/part-of: headlamp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: headlamp
+        app.kubernetes.io/part-of: headlamp
+        app.kubernetes.io/component: ui
+    spec:
+      serviceAccountName: headlamp
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100 # headlamp user in the image
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: headlamp
+          image: ghcr.io/headlamp-k8s/headlamp:v0.25.0
+          imagePullPolicy: IfNotPresent
+          args: ["-in-cluster", "-plugins-dir=/headlamp/plugins"]
+          ports:
+            - name: http
+              containerPort: 4466
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+      volumes:
+        - name: tmp
+          emptyDir: {}

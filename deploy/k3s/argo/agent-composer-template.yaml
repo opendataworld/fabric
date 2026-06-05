@@ -1,0 +1,59 @@
+# Sample "agent composer" — a reusable WorkflowTemplate that composes an agent
+# loop as a DAG (plan → retrieve/act in parallel → observe → review). Swap the
+# argosay echo steps for real containers (LLM call, tool, retriever, etc.) to
+# turn it into a working agent pipeline. Run it from the Argo UI or:
+#
+#   argo submit --from workflowtemplate/agent-composer -n argo --watch
+#
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: agent-composer
+  namespace: argo
+  labels:
+    app.kubernetes.io/part-of: argo
+spec:
+  entrypoint: agent
+  serviceAccountName: argo
+  arguments:
+    parameters:
+      - name: goal
+        value: "summarize the day's events"
+  templates:
+    - name: agent
+      dag:
+        tasks:
+          - name: plan
+            template: step
+            arguments:
+              parameters: [{ name: msg, value: "plan: decompose goal -> {{workflow.parameters.goal}}" }]
+          - name: retrieve
+            template: step
+            dependencies: [plan]
+            arguments:
+              parameters: [{ name: msg, value: "retrieve: fetch context" }]
+          - name: act
+            template: step
+            dependencies: [plan]
+            arguments:
+              parameters: [{ name: msg, value: "act: call tools / model" }]
+          - name: observe
+            template: step
+            dependencies: [retrieve, act]
+            arguments:
+              parameters: [{ name: msg, value: "observe: gather results" }]
+          - name: review
+            template: step
+            dependencies: [observe]
+            arguments:
+              parameters: [{ name: msg, value: "review: check against goal, finalize" }]
+    - name: step
+      inputs:
+        parameters: [{ name: msg }]
+      container:
+        image: argoproj/argosay:v2
+        command: [/argosay]
+        args: ["echo", "{{inputs.parameters.msg}}"]
+        resources:
+          requests: { cpu: 10m, memory: 16Mi }
+          limits: { memory: 64Mi }

@@ -1,0 +1,82 @@
+# Redis — transactional file locking + in-memory cache for Nextcloud.
+# Lightweight, ephemeral (cache only); no persistence needed.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-redis
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  selector:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: nextcloud
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-redis
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: nextcloud
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/part-of: nextcloud
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/part-of: nextcloud
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999 # redis user in the official image
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          # Require auth using the password from the secret.
+          command: ["sh", "-c"]
+          args:
+            - exec redis-server --requirepass "$REDIS_HOST_PASSWORD" --save "" --appendonly no
+          envFrom:
+            - secretRef:
+                name: nextcloud-redis
+          ports:
+            - name: redis
+              containerPort: 6379
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "redis-cli -a \"$REDIS_HOST_PASSWORD\" ping | grep -q PONG"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "redis-cli -a \"$REDIS_HOST_PASSWORD\" ping | grep -q PONG"]
+            initialDelaySeconds: 15
+            periodSeconds: 20

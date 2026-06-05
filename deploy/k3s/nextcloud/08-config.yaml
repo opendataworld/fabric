@@ -1,0 +1,25 @@
+# Single source of truth for all NON-SECRET, tunable app settings.
+# Edit here (or override per-environment with a Kustomize patch) instead of
+# hunting through the Deployment. Secrets live separately in 01-secrets.yaml.
+#
+# Every key below is a recognized env var of the official `nextcloud` image.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-config
+  namespace: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/part-of: nextcloud
+data:
+  # --- wiring (in-cluster service names; change only if you rename them) ---
+  POSTGRES_HOST: nextcloud-postgres
+  REDIS_HOST: nextcloud-redis
+  # --- ingress / proxy ----------------------------------------------------
+  OVERWRITEPROTOCOL: https
+  TRUSTED_PROXIES: 10.42.0.0/16 # default k3s pod CIDR
+  # Your public hostname. Keep in sync with the host in 05-ingress.yaml.
+  NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.example.com
+  # --- PHP tuning ---------------------------------------------------------
+  PHP_UPLOAD_LIMIT: 2G
+  PHP_MEMORY_LIMIT: 512M

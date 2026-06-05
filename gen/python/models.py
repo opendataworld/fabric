@@ -253,6 +253,17 @@ class Product:
 
 
 @dataclass
+class Protocol:
+    """What are the rules of exchange?  (fabric:primitive:protocol)"""
+    id: str
+    name: str
+    version: Optional[str] = None
+    format: Optional[str] = None
+    spec: Optional[str] = None
+    status: Optional[str] = None
+
+
+@dataclass
 class Relationship:
     """How are things connected?  (fabric:primitive:relationship)"""
     id: str
@@ -292,6 +303,14 @@ class Role:
     """What set of permissions is granted?  (fabric:primitive:role)"""
     id: str
     name: str
+
+
+@dataclass
+class Runtime:
+    """What executes, remembers, and responds?  (fabric:primitive:runtime)"""
+    id: str
+    name: str
+    version: Optional[str] = None
 
 
 @dataclass
@@ -365,4 +384,17 @@ class Time:
     end: Optional[datetime] = None
     duration: Optional[str] = None
     timezone: Optional[str] = None
+
+
+@dataclass
+class Touchpoint:
+    """Where and how do things interact?  (fabric:primitive:touchpoint)"""
+    id: str
+    name: str
+    surface: str
+    protocol: str
+    format: Optional[str] = None
+    direction: Optional[str] = None
+    endpoint: Optional[str] = None
+    protocolVersion: Optional[str] = None
 

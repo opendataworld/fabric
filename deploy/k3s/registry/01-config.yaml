@@ -1,0 +1,46 @@
+# Zot registry configuration. Non-secret; the htpasswd credentials live in the
+# Secret (02-htpasswd.example.yaml).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zot-config
+  namespace: registry
+  labels:
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/part-of: registry
+data:
+  config.json: |
+    {
+      "distSpecVersion": "1.1.0",
+      "storage": {
+        "rootDirectory": "/var/lib/registry",
+        "dedupe": true,
+        "gc": true
+      },
+      "http": {
+        "address": "0.0.0.0",
+        "port": "5000",
+        "auth": {
+          "htpasswd": { "path": "/secret/htpasswd" }
+        },
+        "accessControl": {
+          "repositories": {
+            "**": {
+              "anonymousPolicy": ["read"],
+              "defaultPolicy": ["read", "create", "update"]
+            }
+          }
+        }
+      },
+      "log": { "level": "info" },
+      "extensions": {
+        "search": { "enable": true },
+        "ui": { "enable": true },
+        "scrub": { "interval": "24h" },
+        "trust": {
+          "enable": true,
+          "cosign": true,
+          "notation": true
+        }
+      }
+    }

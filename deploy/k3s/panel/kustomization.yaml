@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Apply with:  kubectl apply -k deploy/k3s/panel
+# Set your hostname in 10-panel.yaml (replace catalog.example.com) first,
+# or use ./install.sh <hostname>.
+namespace: stack-catalog
+
+resources:
+  - 00-namespace.yaml
+  - 10-panel.yaml
+
+# Site assets become a ConfigMap; its name carries a content hash so any edit
+# to the catalog triggers a rolling update automatically.
+configMapGenerator:
+  - name: panel-site
+    files:
+      - site/index.html
+      - site/styles.css
+      - site/app.js
+      - site/catalog.json
+
+images:
+  - name: nginxinc/nginx-unprivileged
+    newTag: 1.27-alpine
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
