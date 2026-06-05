@@ -133,6 +133,28 @@ The platform ships as the **Agent Composer**. It has one hard admission rule:
 
 In short: **the edge translates; the core composes — in one language only.**
 
+## 7. Why this sells: every enterprise product reduces to three things
+
+**Every enterprise product = a data model + states + control flows.**
+
+That's the whole thesis. Strip any enterprise SaaS down and you find exactly:
+
+| The three parts | Fabric provides | Example (the identity stack) |
+|---|---|---|
+| **Data model** | primitives + `Schema`/`FieldGroup`/`DataType` → SurrealDB schema, JSON-LD | Users, Accounts, Entitlements, Safes |
+| **States** | `State` (everything important is a State) + `Event` advances it | lifecycle (joiner/leaver), JIT "elevated", "last-rotated" |
+| **Control flows** | `Policy`·`Constraint`·`Capability`·`Objective`·`Journey`·`Agent` | approvals, certifications, rotation, SOD enforcement |
+
+We *demonstrated* this: **Okta, SailPoint, and CyberArk** — three very different
+enterprise products — each decomposed cleanly into (data model → primitives),
+(states → `State`), (control flows → `Policy`/`Agent`/`Journey`). See
+`docs/*-data-model-mapping.md`.
+
+So the platform doesn't model *one* product — it models the **substrate every
+enterprise product is built from.** A new product is: load its data model, name
+its states, wire its control flows as governed agent paths. That is what the
+**Agent Composer** sells.
+
 ## In one breath
 
 > The core is the graph. Everything important is a State; Events advance it;
