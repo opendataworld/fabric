@@ -71,11 +71,15 @@ Istio, Falco, …) tagged by maturity, and the companion
 [`../nextcloud`](../nextcloud) stack items marked *deployed*. Maturity is a
 snapshot; refresh against <https://landscape.cncf.io>.
 
-## Preview locally
+## Preview
 
-```bash
-cd site && python3 -m http.server 8080   # then open http://localhost:8080
-```
+- **Local:** `cd site && python3 -m http.server 8080` → open <http://localhost:8080>
+  (serve it — `fetch('catalog.json')` is blocked on `file://`).
+- **Hosted (clickable URL):** the repo's GitHub Pages workflow publishes this
+  panel at **`<pages-url>/panel/`** (assembled from `site/` here; deploys on
+  push to `main`).
+- **On the cluster, no DNS:** run [`../preview.sh`](../preview.sh) on the k3s
+  host to port-forward the Service and get a ready-made `ssh -L` tunnel command.
 
 ## Notes
 

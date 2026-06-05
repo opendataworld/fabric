@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "deploy/k3s/panel/site/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -28,8 +29,17 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      # Assemble the published site: the data-model page at the root, and the
+      # k3s Stack Catalog panel under /panel/ (single source of truth:
+      # deploy/k3s/panel/site).
+      - name: Assemble pages artifact
+        run: |
+          mkdir -p _site
+          cp -r site/. _site/
+          mkdir -p _site/panel
+          cp -r deploy/k3s/panel/site/. _site/panel/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
