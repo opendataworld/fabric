@@ -78,25 +78,11 @@ spec:
           ports:
             - name: http
               containerPort: 80
-          env:
-            - name: POSTGRES_HOST
-              value: nextcloud-postgres
-            - name: REDIS_HOST
-              value: nextcloud-redis
-            # Behind Traefik doing TLS termination — make Nextcloud emit
-            # https URLs and trust the ingress network.
-            - name: OVERWRITEPROTOCOL
-              value: https
-            - name: TRUSTED_PROXIES
-              value: 10.42.0.0/16 # default k3s pod CIDR
-            # Set this to your real hostname (see 05-ingress.yaml).
-            - name: NEXTCLOUD_TRUSTED_DOMAINS
-              value: nextcloud.example.com
-            - name: PHP_UPLOAD_LIMIT
-              value: 2G
-            - name: PHP_MEMORY_LIMIT
-              value: 512M
+          # All non-secret settings come from the ConfigMap (08-config.yaml);
+          # credentials from the Secrets (01-secrets.yaml).
           envFrom:
+            - configMapRef:
+                name: nextcloud-config
             - secretRef:
                 name: nextcloud-db
             - secretRef:
@@ -144,6 +130,8 @@ spec:
                 sleep 300
               done
           envFrom:
+            - configMapRef:
+                name: nextcloud-config
             - secretRef:
                 name: nextcloud-db
             - secretRef:

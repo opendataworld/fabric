@@ -15,6 +15,16 @@ resources:
   - 05-ingress.yaml
   - 06-networkpolicy.yaml
   - 07-pdb.yaml
+  - 08-config.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: kustomize
+
+# Single place to pin / override every image tag (pin digests in prod).
+images:
+  - name: nextcloud
+    newTag: 30-apache
+  - name: postgres
+    newTag: 16-alpine
+  - name: redis
+    newTag: 7-alpine
