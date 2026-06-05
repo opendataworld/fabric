@@ -1,0 +1,41 @@
+name: Validate fabric graph
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "**/*-model.yaml"
+      - "codegen/**"
+      - "tools/fabric.py"
+      - "gen/**"
+      - ".github/workflows/validate.yml"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pyyaml
+
+      # The graph must be sound: 0 dangling edges, every primitive well-formed.
+      - name: Validate the graph
+        run: python tools/fabric.py validate
+
+      # The committed generated artifacts must match the source models.
+      - name: Check generated artifacts are current
+        run: |
+          python codegen/generate_models.py --target all --out gen
+          if ! git diff --quiet -- gen site/data/model.json; then
+            echo "::error::gen/ is stale — run 'python codegen/generate_models.py --target all' and commit."
+            git --no-pager diff --stat -- gen site/data/model.json
+            exit 1
+          fi
+          echo "gen/ is up to date."
