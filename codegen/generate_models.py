@@ -93,6 +93,12 @@ SQL = {
     "datetime": "TIMESTAMPTZ", "number": "DOUBLE PRECISION", "integer": "INTEGER",
     "boolean": "BOOLEAN", "map": "JSONB",
 }
+SURREAL = {  # SurrealQL field types
+    "string": "string", "uri": "string", "iso8601-duration": "string", "geojson": "object",
+    "ref": "record", "enum": "string", "param": "object", "metric": "object",
+    "datetime": "datetime", "number": "number", "integer": "int",
+    "boolean": "bool", "map": "object",
+}
 
 
 # ── generators ──────────────────────────────────────────────────────────────────
@@ -189,10 +195,19 @@ def short(pid: str) -> str:
 def gen_graph_surql(prims: list[dict]) -> str:
     id2table = {p["id"]: _table(p["name"]) for p in prims}
     out = ["-- Graph schema generated from Fabric primitives — DO NOT EDIT BY HAND.",
-           "-- Nodes = primitives; edges = RELATION tables from each relationship.", ""]
+           "-- Nodes = primitives (fully expanded with fields); edges = RELATION tables.", ""]
     for p in prims:
-        out.append(f"DEFINE TABLE {id2table[p['id']]} SCHEMAFULL;")
-    out.append("")
+        tbl = id2table[p["id"]]
+        out.append(f"DEFINE TABLE {tbl} SCHEMAFULL;")
+        for a in attrs(p):
+            if a["name"] == "id":  # SurrealDB manages the record id itself
+                continue
+            base = SURREAL.get(_base(a["type"]), "string")
+            ty = f"array<{base}>" if _is_list(a["type"]) else base
+            if not a.get("required"):
+                ty = f"option<{ty}>"
+            out.append(f"DEFINE FIELD {a['name']} ON TABLE {tbl} TYPE {ty};")
+        out.append("")
     out.append("-- Relationship edges")
     for p in prims:
         src = id2table[p["id"]]
