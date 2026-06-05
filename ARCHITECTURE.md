@@ -155,6 +155,59 @@ enterprise product is built from.** A new product is: load its data model, name
 its states, wire its control flows as governed agent paths. That is what the
 **Agent Composer** sells.
 
+## 8. What makes this different: AI-native · multi-model · graph
+
+Cortex, and the incumbents we mapped (Okta/SailPoint/CyberArk), are
+service-oriented, relational-backed systems with AI bolted *on*. This is the
+inversion:
+
+- **AI-native** — agents aren't a feature, they're the **operating model**. The
+  core runtime *is* graph + identity + memory + **agents**; sidecars *are*
+  agents; the product is an **Agent Composer**; paths are emergent, not scripted.
+  Incumbents add an "AI assistant" beside a fixed app; here the agents *are* the
+  app. Tellingly, incumbents **still make humans fill forms** to enter data —
+  the symptom of a single-model system that can't take rich input. The fabric
+  ingests multi-model input and **agents populate the `State`** — the form is
+  obsolete.
+- **Multi-model** — one **SurrealDB** substrate is graph + document +
+  relational (+ time-series + vector) at once. No stitching three databases
+  together; the data model, the state store, and the relationships live in one
+  place. This also means **multi-model *input*** — the fabric ingests graph,
+  document, relational, and event/vector data as first-class. Incumbents froze
+  on a single relational model years ago and never innovated past it; they
+  can't take multi-model input, so it gets flattened or dropped at the door.
+- **Graph** — the core **is** a graph. Everything important is a `State`
+  *node*; control flows are *edges*; identity resolution is *traversal*.
+  Relationships are first-class, not foreign keys bolted across tables.
+
+These three reinforce each other: a **graph** substrate that's **multi-model**
+is the only thing an **AI-native** agent layer can reason and act over uniformly
+— one ambiguity-free language, one system of record, agents all the way to the
+edge.
+
+> The incumbents are products on a database. This is a graph an AI operates.
+
+### Where incumbents get crippled
+
+No incumbent supports all three features — so each breaks at the use cases that
+*need* them:
+
+| Use case | Why incumbents break | Why the fabric doesn't |
+|---|---|---|
+| **Deep identity resolution** ("all access for this person across N providers, M hops") | relational join depth explodes; data siloed per product | native graph **traversal** over one substrate |
+| **Cross-domain correlation** (authn × entitlements × privileged secrets × behavior in one answer) | three separate systems, no shared model | **multi-model** graph holds it all as one |
+| **Blast-radius / impact analysis** ("if this entitlement changes, what's affected?") | unbounded reachability is impractical in SQL | graph **reachability** is the natural query |
+| **Open-ended remediation** ("figure it out and fix it") | only fixed playbooks/workflows | **AI-native** agents, emergent paths |
+| **Semantic integration across vendors** | schema mismatch, overloaded terms | one **ambiguity-free** language, `sameAs` IRIs |
+
+The pattern: the moment a use case needs *relationships, more than one data
+model, or open-ended agency*, a service-on-a-relational-DB is crippled — it can
+bolt on an assistant, but it cannot become a graph an AI operates.
+
+> Honest caveat: incumbents are mature and battle-tested at their core use
+> cases; this fabric is a coherent model + agents (on PR), not yet a running
+> product. The advantage is structural, not yet proven in production.
+
 ## In one breath
 
 > The core is the graph. Everything important is a State; Events advance it;
