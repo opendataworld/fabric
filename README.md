@@ -12,6 +12,9 @@ identities, governance, datasets, agents, and publishing are all composed.
 Everything is an asset. Everything is governed. Everything is connected
 through a canonical model.
 
+New in **v0.2.0-alpha**: a runnable Go graph runtime (GraphQL + MCP) and the
+[Product MVP Builder](site/build.html).
+
 ## Root primitives
 
 Each primitive answers one fundamental question and is defined as a rich,

@@ -60,7 +60,10 @@ Key relation tables (graph edges):
 - `authenticated_by` — `account → identity_provider`
 - `accessed_from` — `account → device_session`
 
-SurrealDB instance: `schemadb-06ehsj292ppah8kbsk9pmnjjbc.aws-aps1.surreal.cloud`
+SurrealDB instance: read from configuration — the `SURREAL_URL` environment
+variable (with `SURREAL_USER` / `SURREAL_PASS` / `SURREAL_NS` / `SURREAL_DB`),
+e.g. `export SURREAL_URL=wss://<your-instance>.surreal.cloud`. Do not hardcode a
+specific instance host here; resolve it from the environment at runtime.
 
 ---
 
