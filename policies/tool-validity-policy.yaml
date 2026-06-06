@@ -1,0 +1,22 @@
+# Tool Validity Policy — the contract every tool / provider must satisfy.
+# Instance of the Policy primitive (a governed bundle of Constraints).
+# Declarative: signed by the human (guard), enforced at the platform runtime.
+# Tools are verified, never trusted.
+id: "fabric:policy:tool-validity"
+name: "Tool Validity Policy"
+extends: ["fabric:primitive:policy"]
+description: >
+  A tool/provider is admitted only if it is supported, stable, CNCF-accepted (any
+  level), and consumed via a documented interface (API/MCP/CLI/SDK) bound to a
+  documented API version. Bind to the documented API version, not the tool's
+  release version. Go by documentation.
+effect: "permit"          # permit only when ALL member constraints hold
+combine: "all"
+constraints:
+  - "fabric:constraint:tool-supported"
+  - "fabric:constraint:tool-stable"
+  - "fabric:constraint:tool-cncf-accepted"
+  - "fabric:constraint:tool-documented-interface"
+scope: { appliesTo: "tool | provider | dependency" }
+relationships:
+  - { name: composedOf, target: "fabric:primitive:constraint", cardinality: "1..*" }

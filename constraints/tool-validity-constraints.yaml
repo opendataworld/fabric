@@ -1,0 +1,33 @@
+# Tool Validity Constraints — the four conditions a tool must satisfy.
+# Instances of the Constraint primitive, composed into fabric:policy:tool-validity.
+id: "fabric:constraint:tool-supported"
+name: "Tool is supported"
+extends: ["fabric:primitive:constraint"]
+kind: "eligibility"
+expression: "tool.maintained == true and tool.maintainer in {community, company}"
+severity: "blocking"
+onViolation: "deny"
+---
+id: "fabric:constraint:tool-stable"
+name: "Tool is stable (stable tag only)"
+extends: ["fabric:primitive:constraint"]
+kind: "eligibility"
+expression: "tool.channel == 'stable' and tool.tag not in {latest, edge, nightly, alpha, beta, rc}"
+severity: "blocking"
+onViolation: "deny"
+---
+id: "fabric:constraint:tool-cncf-accepted"
+name: "Tool is CNCF-accepted (any level)"
+extends: ["fabric:primitive:constraint"]
+kind: "eligibility"
+expression: "tool in cncf.landscape and tool.cncf.level in {sandbox, incubating, graduated}"
+severity: "blocking"
+onViolation: "deny"
+---
+id: "fabric:constraint:tool-documented-interface"
+name: "Tool consumed via a documented interface at a documented API version"
+extends: ["fabric:primitive:constraint"]
+kind: "eligibility"
+expression: "tool.interface in {api, mcp, cli, sdk} and tool.interface.documented == true and bind(tool.apiVersion from documentation)"
+severity: "blocking"
+onViolation: "deny"
