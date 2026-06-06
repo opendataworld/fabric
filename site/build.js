@@ -86,6 +86,60 @@ const PRESETS = [
       { name: "Zero-downtime upgrades", stage: "Planned" },
     ],
   },
+  {
+    name: "Flow Traces Debugger",
+    slug: "flow-traces-debugger",
+    tagline: "Capture, replay, and debug execution traces across pipelines and agents.",
+    description:
+      "An MVP that turns runs into navigable traces: every step is an Event on a timeline, replayable and correlated to errors and latency so you can debug a pipeline or agent flow end to end.",
+    market: "Observability",
+    status: "In design",
+    capabilities: ["event", "pipeline", "agent", "state", "metric", "relationship"],
+    customCaps: ["Trace replay", "Span search"],
+    features: [
+      { name: "Trace capture", stage: "Beta" },
+      { name: "Span timeline", stage: "In design" },
+      { name: "Replay & step-through", stage: "Planned" },
+      { name: "Error correlation", stage: "Planned" },
+      { name: "Latency metrics", stage: "In design" },
+    ],
+  },
+  {
+    name: "Integration Center",
+    slug: "integration-center",
+    tagline: "One hub to configure, run, and monitor every source integration.",
+    description:
+      "An MVP control hub for connectors: browse a connector catalog, store credentials safely, schedule syncs, and monitor runs — every integration governed by policy with a full Event history.",
+    market: "Data Integration",
+    status: "In design",
+    capabilities: ["connector", "source", "pipeline", "credential", "event", "policy"],
+    customCaps: ["Connector marketplace", "Sync scheduling"],
+    features: [
+      { name: "Connector catalog", stage: "Beta" },
+      { name: "Credential vault", stage: "In design" },
+      { name: "Sync scheduling", stage: "In design" },
+      { name: "Run monitoring", stage: "Planned" },
+      { name: "Schema mapping", stage: "Planned" },
+    ],
+  },
+  {
+    name: "Automation Center",
+    slug: "automation-center",
+    tagline: "Build, schedule, and govern automations across the fabric.",
+    description:
+      "An MVP for no-code automation: compose trigger → action rules from fabric Capabilities, gate them with Policies and approvals, schedule runs, and keep a complete run history.",
+    market: "Workflow Automation",
+    status: "In design",
+    capabilities: ["event", "capability", "policy", "agent", "constraint", "metric"],
+    customCaps: ["Trigger rules", "Action library"],
+    features: [
+      { name: "Trigger builder", stage: "Beta" },
+      { name: "Action library", stage: "In design" },
+      { name: "Scheduling", stage: "In design" },
+      { name: "Approval gates", stage: "Planned" },
+      { name: "Run history", stage: "Planned" },
+    ],
+  },
 ];
 
 const $ = (s, r = document) => r.querySelector(s);

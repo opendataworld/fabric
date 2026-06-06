@@ -45,8 +45,8 @@ schema.org-aligned YAML model conforming to
 **IAM nodes** (generalizing Keycloak & Casdoor): `Role` · `Permission` ·
 `Group` · `Application`.
 
-The model forms a clean graph — **39 nodes, 104 edges, 0 dangling** (verified by
-`codegen/generate_models.py --target graph`).
+The model forms a clean graph — **42 nodes, 120 edges, 0 dangling** (verified by
+`python tools/fabric.py validate`).
 
 ## How the primitives compose
 
@@ -73,7 +73,7 @@ Key design realizations carried over from the design notes:
 ## Root layer status
 
 The root layer is complete, and the graph has been extended with identity,
-composition, and domain nodes so the platform is self-describing — **35 nodes total**.
+composition, and domain nodes so the platform is self-describing — **42 nodes total**.
 
 ## Layout
 
