@@ -97,7 +97,21 @@ go run . --mcp        # serve MCP on stdio (stdout = protocol, stderr = logs)
 
 Tools: `fabric_classes`, `fabric_resolve`, `fabric_graph`, `fabric_records`,
 `fabric_get_record`, `fabric_traverse`, `fabric_create_record`, `fabric_relate`,
-`fabric_register_agent`, `fabric_agent_act`, `fabric_signup`.
+`fabric_register_agent`, `fabric_agent_act`, `fabric_propose`, `fabric_admit`,
+`fabric_reject`, `fabric_resolver_scan`, `fabric_signup`.
+
+### URAP propose → admit (the agent never commits)
+
+An agent **proposes** a change into possibility; it is recorded but **not
+committed**. A human **admits** it at the now-edge — the only path that applies
+the change and writes an immutable Event. This makes the agent layer
+URAP-compliant (the agent proposes; the human guards reality).
+
+The **Resolver** agent (`fabric_resolver_scan` / GraphQL `resolverScan`) is a
+deterministic, on-graph example: it finds duplicate records (same `keyField`) and
+**proposes** merging each duplicate into the canonical record (lowest id) — it
+commits nothing. `admit` applies a merge (relating duplicates `canonicalizedAs`
+the canonical, marking them merged); `reject` discards it.
 
 Agents are modelled on the canonical Agent primitive
 ([`agents/agent-model.yaml`](../agents/agent-model.yaml)): an Agent *executes*
@@ -122,6 +136,7 @@ claude mcp add fabric -- go run /path/to/fabric/runtime --mcp
 | `model.go`  | load/index the canonical model; schema-graph resolve; self-seed |
 | `schema.go` | GraphQL schema, resolvers, and the `signup` domain flow |
 | `agent.go`  | agent-native layer: register agents, record governed actions |
+| `resolver.go` | URAP propose→admit + the deterministic Resolver agent (dedup→canonical) |
 | `mcp.go`    | Model Context Protocol server (stdio) — the fabric as agent tools |
 | `server.go` | HTTP `/graphql` endpoint + embedded explorer |
 | `main.go`   | wiring, config, lifecycle (`--mcp`, `--selftest`) |

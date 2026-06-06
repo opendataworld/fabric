@@ -310,6 +310,56 @@ func (a *API) BuildSchema() (graphql.Schema, error) {
 					}, true), nil
 				},
 			},
+			"propose": &graphql.Field{
+				Type:        recordType,
+				Description: "Agent proposes a change into possibility (URAP) — recorded, NOT committed.",
+				Args: graphql.FieldConfigArgument{
+					"agent":       &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"action":      &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"targetTable": &graphql.ArgumentConfig{Type: graphql.String},
+					"targetId":    &graphql.ArgumentConfig{Type: graphql.String},
+					"fields":      &graphql.ArgumentConfig{Type: jsonScalar},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					fields, _ := p.Args["fields"].(map[string]any)
+					return a.Propose(p.Args["agent"].(string), p.Args["action"].(string),
+						toStr(p.Args["targetTable"]), toStr(p.Args["targetId"]), fields)
+				},
+			},
+			"admit": &graphql.Field{
+				Type:        recordType,
+				Description: "Human admits a proposal at the now-edge — the only path that commits.",
+				Args: graphql.FieldConfigArgument{
+					"proposal": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"admitter": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return a.Admit(p.Args["proposal"].(string), p.Args["admitter"].(string))
+				},
+			},
+			"reject": &graphql.Field{
+				Type:        recordType,
+				Description: "Human rejects a proposal — discarded, nothing committed.",
+				Args: graphql.FieldConfigArgument{
+					"proposal": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"rejecter": &graphql.ArgumentConfig{Type: graphql.String},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return a.Reject(p.Args["proposal"].(string), toStr(p.Args["rejecter"]))
+				},
+			},
+			"resolverScan": &graphql.Field{
+				Type:        graphql.NewList(recordType),
+				Description: "Resolver agent: deterministically PROPOSE merges for duplicate records (by keyField).",
+				Args: graphql.FieldConfigArgument{
+					"agent":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"table":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"keyField": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return a.ResolverScan(p.Args["agent"].(string), p.Args["table"].(string), p.Args["keyField"].(string))
+				},
+			},
 		},
 	})
 
