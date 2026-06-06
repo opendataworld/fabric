@@ -167,6 +167,43 @@ func NewMCPServer(a *API) *MCPServer {
 			},
 		},
 		{
+			Name:        "fabric_propose",
+			Description: "URAP: agent PROPOSES a change into possibility — recorded, NOT committed.",
+			InputSchema: obj(map[string]any{
+				"agent": str("acting agent id"), "action": str("verb, e.g. resolve.merge"),
+				"targetTable": str("optional record table"), "targetId": str("optional record id"),
+				"fields": map[string]any{"type": "object", "description": "optional proposed fields"},
+			}, "agent", "action"),
+			handler: func(args map[string]any) (any, error) {
+				fields, _ := args["fields"].(map[string]any)
+				return a.Propose(argStr(args, "agent"), argStr(args, "action"), argStr(args, "targetTable"), argStr(args, "targetId"), fields)
+			},
+		},
+		{
+			Name:        "fabric_admit",
+			Description: "Human admits a proposal at the now-edge — the only path that commits (audited Event).",
+			InputSchema: obj(map[string]any{"proposal": str("proposal id"), "admitter": str("human guard id")}, "proposal", "admitter"),
+			handler: func(args map[string]any) (any, error) {
+				return a.Admit(argStr(args, "proposal"), argStr(args, "admitter"))
+			},
+		},
+		{
+			Name:        "fabric_reject",
+			Description: "Human rejects a proposal — discarded, nothing committed.",
+			InputSchema: obj(map[string]any{"proposal": str("proposal id"), "rejecter": str("who rejected")}, "proposal"),
+			handler: func(args map[string]any) (any, error) {
+				return a.Reject(argStr(args, "proposal"), argStr(args, "rejecter"))
+			},
+		},
+		{
+			Name:        "fabric_resolver_scan",
+			Description: "Resolver agent: deterministically PROPOSE merges for duplicate records (by keyField). Proposes only.",
+			InputSchema: obj(map[string]any{"agent": str("resolver agent id"), "table": str("record table"), "keyField": str("field that identifies duplicates")}, "agent", "table", "keyField"),
+			handler: func(args map[string]any) (any, error) {
+				return a.ResolverScan(argStr(args, "agent"), argStr(args, "table"), argStr(args, "keyField"))
+			},
+		},
+		{
 			Name:        "fabric_signup",
 			Description: "Register a person as an Identity record (+ audit Event).",
 			InputSchema: obj(map[string]any{"name": str("full name"), "email": str("email"), "company": str("optional"), "message": str("optional use case")}, "name", "email"),
