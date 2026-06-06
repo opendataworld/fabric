@@ -56,7 +56,7 @@ relationships:
   - { name: securedBy, target: "fabric:primitive:credential", cardinality: "0..*", description: "Credential/auth required to use it." }
   - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*", description: "Policy constraining the interaction." }
   - { name: emits, target: "fabric:primitive:event", cardinality: "0..*", description: "Events produced when the touchpoint is used." }
-  - { name: locatedAt, target: "fabric:primitive:location", cardinality: "0..1", description: "Network/physical location of the touchpoint." }
+  - { name: locatedAt, target: "fabric:primitive:location", cardinality: "0..1", description: "Network/physical location of the touchpoint.", schemaOrg: "schema:location" }
 invariants:
   - "A touchpoint is REQUIRED only at a boundary — where the interacting things differ in type or in surface/protocol."
   - "If both sides are the same type of thing sharing one surface and protocol, no touchpoint definition is required (the interaction is seamless)."

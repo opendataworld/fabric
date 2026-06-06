@@ -13,5 +13,5 @@ attributes:
   - { name: value, type: number, required: false }
   - { name: unit, type: string, required: false }
 relationships:
-  - { name: measures, target: "fabric:primitive:objective", cardinality: "0..*" }
+  - { name: measures, target: "fabric:primitive:objective", cardinality: "0..*", schemaOrg: "schema:variableMeasured" }
   - { name: evidencedBy, target: "fabric:primitive:evidence", cardinality: "0..*" }

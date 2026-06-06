@@ -301,9 +301,15 @@ def gen_jsonld(prims: list[dict]) -> dict:
             props.append(prop)
         if props:
             node["fabric:attribute"] = props
-        rels = [{"@id": f"fabric:{_table(r['name'])}", "rdfs:label": r["name"],
-                 "schema:rangeIncludes": {"@id": r["target"]}}
-                for r in p.get("relationships", []) if r["target"] in known]
+        rels = []
+        for r in p.get("relationships", []):
+            if r["target"] not in known:
+                continue
+            rd = {"@id": f"fabric:{_table(r['name'])}", "rdfs:label": r["name"],
+                  "schema:rangeIncludes": {"@id": r["target"]}}
+            if r.get("schemaOrg"):
+                rd["schema:sameAs"] = {"@id": r["schemaOrg"]}
+            rels.append(rd)
         if rels:
             node["fabric:relationship"] = rels
         graph.append(node)

@@ -11,6 +11,6 @@ attributes:
   - { name: id, type: string, required: true }
   - { name: name, type: string, required: true }
 relationships:
-  - { name: composes, target: "fabric:primitive:product", cardinality: "1..*" }
+  - { name: composes, target: "fabric:primitive:product", cardinality: "1..*", schemaOrg: "schema:hasPart" }
   - { name: addresses, target: "fabric:primitive:market", cardinality: "0..*" }
   - { name: servesObjective, target: "fabric:primitive:objective", cardinality: "0..*" }

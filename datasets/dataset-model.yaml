@@ -13,6 +13,6 @@ attributes:
   - { name: format, type: string, required: false }
 relationships:
   - { name: conformsTo, target: "fabric:primitive:schema", cardinality: "0..1" }
-  - { name: derivedFrom, target: "fabric:primitive:source", cardinality: "0..*" }
+  - { name: derivedFrom, target: "fabric:primitive:source", cardinality: "0..*", schemaOrg: "schema:isBasedOn" }
   - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*" }
   - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }

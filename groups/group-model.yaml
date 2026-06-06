@@ -12,6 +12,6 @@ attributes:
   - { name: id, type: string, required: true }
   - { name: name, type: string, required: true }
 relationships:
-  - { name: contains, target: "fabric:primitive:identity", cardinality: "0..*" }
+  - { name: contains, target: "fabric:primitive:identity", cardinality: "0..*", schemaOrg: "schema:hasPart" }
   - { name: hasRole, target: "fabric:primitive:role", cardinality: "0..*" }
   - { name: withinTenant, target: "fabric:primitive:tenant", cardinality: "0..1" }

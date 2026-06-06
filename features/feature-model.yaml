@@ -12,6 +12,6 @@ attributes:
   - { name: name, type: string, required: true }
   - { name: status, type: string, required: false }
 relationships:
-  - { name: partOf, target: "fabric:primitive:product", cardinality: "0..*" }
+  - { name: partOf, target: "fabric:primitive:product", cardinality: "0..*", schemaOrg: "schema:isPartOf" }
   - { name: realizes, target: "fabric:primitive:capability", cardinality: "0..*" }
   - { name: hasState, target: "fabric:primitive:state", cardinality: "0..1" }

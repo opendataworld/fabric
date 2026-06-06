@@ -55,6 +55,7 @@ attributes:
     description: "Identity accountable for the policy."
 relationships:
   - name: composedOf
+    schemaOrg: "schema:hasPart"
     target: "fabric:primitive:constraint"
     cardinality: "1..*"
   - name: governs

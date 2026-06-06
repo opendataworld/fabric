@@ -11,4 +11,4 @@ attributes:
   - { name: id, type: string, required: true }
   - { name: name, type: string, required: true }
 relationships:
-  - { name: categorizes, target: "fabric:primitive:product", cardinality: "0..*" }
+  - { name: categorizes, target: "fabric:primitive:product", cardinality: "0..*", schemaOrg: "schema:category" }

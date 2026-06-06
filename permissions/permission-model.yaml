@@ -7,7 +7,7 @@ layer: "domain"
 question: "What action is allowed on what?"
 extends: ["fabric:primitive:constraint"]
 description: "An allow-rule binding an action (Capability) to a target Resource — the atom of RBAC/ABAC."
-schemaOrg: { type: "schema:Thing", url: "https://schema.org/Thing" }
+schemaOrg: { type: "schema:DigitalDocumentPermission", url: "https://schema.org/DigitalDocumentPermission" }
 attributes:
   - { name: id, type: string, required: true }
   - { name: action, type: string, required: true }
@@ -15,4 +15,4 @@ attributes:
 relationships:
   - { name: permits, target: "fabric:primitive:capability", cardinality: "0..*" }
   - { name: over, target: "fabric:primitive:resource", cardinality: "0..*" }
-  - { name: composesInto, target: "fabric:primitive:policy", cardinality: "0..*" }
+  - { name: composesInto, target: "fabric:primitive:policy", cardinality: "0..*", schemaOrg: "schema:isPartOf" }

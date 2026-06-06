@@ -52,6 +52,7 @@ relationships:
     cardinality: "0..*"
     description: "Policies governing this identity."
   - name: locatedAt
+    schemaOrg: "schema:location"
     target: "fabric:primitive:location"
     cardinality: "0..*"
 invariants:

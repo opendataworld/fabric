@@ -12,5 +12,5 @@ attributes:
   - { name: name, type: string, required: true }
 relationships:
   - { name: isolates, target: "fabric:primitive:identity", cardinality: "0..*" }
-  - { name: owns, target: "fabric:primitive:resource", cardinality: "0..*" }
+  - { name: owns, target: "fabric:primitive:resource", cardinality: "0..*", schemaOrg: "schema:owns" }
   - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*" }

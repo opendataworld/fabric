@@ -51,6 +51,7 @@ relationships:
     cardinality: "0..*"
     description: "Objectives whose progress this evidence proves."
   - name: derivedFrom
+    schemaOrg: "schema:isBasedOn"
     target: "fabric:primitive:event"
     cardinality: "0..*"
     description: "Events the evidence is drawn from."

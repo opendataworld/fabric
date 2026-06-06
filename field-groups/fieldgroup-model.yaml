@@ -27,6 +27,7 @@ relationships:
     target: "fabric:primitive:datatype"
     cardinality: "0..*"
   - name: composedInto
+    schemaOrg: "schema:isPartOf"
     target: "fabric:primitive:schema"
     cardinality: "0..*"
 invariants:

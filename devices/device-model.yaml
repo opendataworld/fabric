@@ -27,6 +27,7 @@ relationships:
     target: "fabric:primitive:identity"
     cardinality: "0..*"
   - name: locatedAt
+    schemaOrg: "schema:location"
     target: "fabric:primitive:location"
     cardinality: "0..1"
 invariants:

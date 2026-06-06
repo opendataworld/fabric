@@ -76,6 +76,7 @@ properties:
         target: { type: string, description: "Target primitive id." }
         cardinality: { type: string, enum: ["1", "0..1", "1..*", "0..*"] }
         description: { type: string }
+        schemaOrg: { type: string, description: "schema.org property this predicate maps to (emitted as schema:sameAs)." }
   invariants:
     type: array
     items: { type: string }

@@ -442,6 +442,9 @@
           "rdfs:label": "composesInto",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:policy"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isPartOf"
           }
         },
         {
@@ -539,6 +542,9 @@
           "rdfs:label": "assertedAbout",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:identity"
+          },
+          "schema:sameAs": {
+            "@id": "schema:about"
           }
         },
         {
@@ -636,6 +642,9 @@
           "rdfs:label": "derivedFrom",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:source"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isBasedOn"
           }
         },
         {
@@ -695,6 +704,9 @@
           "rdfs:label": "locatedAt",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:location"
+          },
+          "schema:sameAs": {
+            "@id": "schema:location"
           }
         }
       ]
@@ -839,6 +851,9 @@
           "rdfs:label": "derivedFrom",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:event"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isBasedOn"
           }
         },
         {
@@ -884,6 +899,9 @@
           "rdfs:label": "partOf",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:product"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isPartOf"
           }
         },
         {
@@ -943,6 +961,9 @@
           "rdfs:label": "composedInto",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:schema"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isPartOf"
           }
         }
       ]
@@ -975,6 +996,9 @@
           "rdfs:label": "contains",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:identity"
+          },
+          "schema:sameAs": {
+            "@id": "schema:hasPart"
           }
         },
         {
@@ -1059,6 +1083,9 @@
           "rdfs:label": "locatedAt",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:location"
+          },
+          "schema:sameAs": {
+            "@id": "schema:location"
           }
         }
       ]
@@ -1214,6 +1241,9 @@
           "rdfs:label": "categorizes",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:product"
+          },
+          "schema:sameAs": {
+            "@id": "schema:category"
           }
         }
       ]
@@ -1258,6 +1288,9 @@
           "rdfs:label": "measures",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:objective"
+          },
+          "schema:sameAs": {
+            "@id": "schema:variableMeasured"
           }
         },
         {
@@ -1363,11 +1396,11 @@
     },
     {
       "@id": "fabric:primitive:permission",
-      "@type": "schema:Thing",
+      "@type": "schema:DigitalDocumentPermission",
       "rdfs:label": "Permission",
       "rdfs:comment": "What action is allowed on what?",
       "schema:sameAs": {
-        "@id": "https://schema.org/Thing"
+        "@id": "https://schema.org/DigitalDocumentPermission"
       },
       "fabric:attribute": [
         {
@@ -1409,6 +1442,9 @@
           "rdfs:label": "composesInto",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:policy"
+          },
+          "schema:sameAs": {
+            "@id": "schema:isPartOf"
           }
         }
       ]
@@ -1454,6 +1490,9 @@
           "rdfs:label": "produces",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:dataset"
+          },
+          "schema:sameAs": {
+            "@id": "schema:result"
           }
         },
         {
@@ -1539,6 +1578,9 @@
           "rdfs:label": "composedOf",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:constraint"
+          },
+          "schema:sameAs": {
+            "@id": "schema:hasPart"
           }
         },
         {
@@ -2155,6 +2197,9 @@
           "rdfs:label": "composes",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:product"
+          },
+          "schema:sameAs": {
+            "@id": "schema:hasPart"
           }
         },
         {
@@ -2227,6 +2272,9 @@
           "rdfs:label": "locatedAt",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:location"
+          },
+          "schema:sameAs": {
+            "@id": "schema:location"
           }
         }
       ]
@@ -2332,6 +2380,9 @@
           "rdfs:label": "owns",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:resource"
+          },
+          "schema:sameAs": {
+            "@id": "schema:owns"
           }
         },
         {
@@ -2609,6 +2660,9 @@
           "rdfs:label": "locatedAt",
           "schema:rangeIncludes": {
             "@id": "fabric:primitive:location"
+          },
+          "schema:sameAs": {
+            "@id": "schema:location"
           }
         }
       ]

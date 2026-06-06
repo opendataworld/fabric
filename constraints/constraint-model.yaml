@@ -46,6 +46,7 @@ attributes:
     description: "Action when violated, e.g. deny, warn, require-approval, throttle."
 relationships:
   - name: composesInto
+    schemaOrg: "schema:isPartOf"
     target: "fabric:primitive:policy"
     cardinality: "0..*"
     description: "Policies that bundle this constraint."

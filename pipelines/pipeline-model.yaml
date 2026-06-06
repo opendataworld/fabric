@@ -13,6 +13,6 @@ attributes:
   - { name: mode, type: enum, required: false }
 relationships:
   - { name: from, target: "fabric:primitive:source", cardinality: "1..*" }
-  - { name: produces, target: "fabric:primitive:dataset", cardinality: "0..*" }
+  - { name: produces, target: "fabric:primitive:dataset", cardinality: "0..*", schemaOrg: "schema:result" }
   - { name: emits, target: "fabric:primitive:event", cardinality: "0..*" }
   - { name: governedBy, target: "fabric:primitive:policy", cardinality: "0..*" }
