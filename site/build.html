@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product MVP Builder — Fabric</title>
+  <meta name="description" content="Compose a product MVP from the Fabric model — pick capabilities, define features with a governed lifecycle, and export a schema.org-aligned Product spec." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="build.css" />
+</head>
+<body>
+  <!-- Nav -->
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Fabric<small>by OpenDataWorld</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#what">What it is</a>
+      <a href="catalog/index.html">Products</a>
+      <a href="model.html">Model</a>
+      <a href="graph.html">Graph</a>
+      <a href="build.html" aria-current="page">Build</a>
+      <a href="contact.html">Contact</a>
+      <a href="signup.html" class="btn btn-ghost">Sign up</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero hero-sm" style="padding:64px 16px 40px;border-bottom:1px solid var(--border)">
+    <div class="hero-inner">
+      <p class="eyebrow">Product MVP Builder</p>
+      <h1 style="font-weight:300;max-width:18ch">Compose a product MVP from the Fabric model.</h1>
+      <p class="lede">
+        Everything is an asset. Pick the <strong>capabilities</strong> your product packages,
+        define its <strong>features</strong> with a governed lifecycle, and export a
+        schema.org-aligned <code>Product</code> spec — ready to drop into the catalog.
+      </p>
+    </div>
+  </section>
+
+  <main class="build-shell">
+    <!-- Stepper -->
+    <ol class="steps" id="steps">
+      <li data-step="0" class="active"><span class="step-num">1</span><span class="step-label"><b>Define</b><span>Name &amp; market</span></span></li>
+      <li data-step="1"><span class="step-num">2</span><span class="step-label"><b>Capabilities</b><span>What it can do</span></span></li>
+      <li data-step="2"><span class="step-num">3</span><span class="step-label"><b>Features</b><span>Units of value</span></span></li>
+      <li data-step="3"><span class="step-num">4</span><span class="step-label"><b>Review</b><span>Export spec</span></span></li>
+    </ol>
+
+    <!-- Step 1: Define -->
+    <section class="panel active" data-panel="0">
+      <div class="panel-head">
+        <h2>Define the product</h2>
+        <p>Start with the essentials. This becomes a <span class="mono-id">fabric:product:&lt;slug&gt;</span> aligned to <code>schema:Product</code>.</p>
+      </div>
+      <div class="field">
+        <label>Start from a template</label>
+        <div class="picker" id="preset-picker" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <p class="hint">Loads a worked MVP you can tweak. Or just start typing below.</p>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="p-name">Product name *</label>
+          <input type="text" id="p-name" placeholder="e.g. Lineage Explorer" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="p-slug">Slug</label>
+          <input type="text" id="p-slug" placeholder="auto from name" autocomplete="off" />
+          <p class="hint">ID: <span class="mono-id" id="p-id">fabric:product:…</span></p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="p-tagline">Tagline *</label>
+        <input type="text" id="p-tagline" placeholder="One line: the promise of the product" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="p-desc">Description</label>
+        <textarea id="p-desc" rows="3" placeholder="What it does and who it's for."></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="p-market">Target market</label>
+          <input type="text" id="p-market" list="market-list" placeholder="e.g. Data Governance" autocomplete="off" />
+          <datalist id="market-list">
+            <option value="Data Governance"></option>
+            <option value="Master Data Management"></option>
+            <option value="Knowledge Graphs"></option>
+            <option value="Identity &amp; Access"></option>
+            <option value="Data Catalog"></option>
+            <option value="Analytics &amp; BI"></option>
+            <option value="AI &amp; Agents"></option>
+          </datalist>
+          <p class="hint">Becomes an <code>addresses → Market</code> edge.</p>
+        </div>
+        <div class="field">
+          <label for="p-status">Lifecycle status</label>
+          <select id="p-status"></select>
+          <p class="hint">From the Fabric feature lifecycle (<code>State</code> primitive).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Capabilities -->
+    <section class="panel" data-panel="1">
+      <div class="panel-head">
+        <h2>What can it do?</h2>
+        <p>Select the <strong>capabilities</strong> this product packages. These map to <code>packages → Capability</code> edges and are drawn from the live Fabric model.</p>
+      </div>
+      <div class="toolbar">
+        <input type="search" id="cap-search" placeholder="Filter capabilities…" />
+        <span class="count-pill"><b id="cap-count">0</b> selected</span>
+      </div>
+      <div class="picker" id="cap-picker"></div>
+      <div class="field" style="margin-top:20px">
+        <label for="cap-custom">Add a custom capability</label>
+        <input type="text" id="cap-custom" placeholder="Type a capability and press Enter" autocomplete="off" />
+        <p class="hint">Custom capabilities are exported as new <code>Capability</code> nodes.</p>
+      </div>
+    </section>
+
+    <!-- Step 3: Features -->
+    <section class="panel" data-panel="2">
+      <div class="panel-head">
+        <h2>Define the MVP features</h2>
+        <p>Each feature is <code>partOf</code> the product and carries its own lifecycle <code>State</code>. Keep it lean — an MVP is the smallest set that delivers the promise.</p>
+      </div>
+      <div id="feature-list"></div>
+      <button class="btn btn-ghost" id="add-feature" style="margin-top:16px">+ Add feature</button>
+    </section>
+
+    <!-- Step 4: Review -->
+    <section class="panel" data-panel="3">
+      <div class="panel-head">
+        <h2>Review &amp; export</h2>
+        <p>Your MVP spec, generated live. Copy or download the YAML for the repo, or the catalog JSON snippet for the site.</p>
+      </div>
+      <div class="summary" id="summary"></div>
+      <div class="export-tabs" id="export-tabs">
+        <button data-tab="product" class="active">product.yaml</button>
+        <button data-tab="features">features.yaml</button>
+        <button data-tab="catalog">catalog.json</button>
+      </div>
+      <div class="code-out"><pre id="code-out"></pre></div>
+      <div class="export-actions">
+        <button class="btn btn-primary" id="copy-btn">Copy</button>
+        <button class="btn btn-ghost" id="download-btn">Download</button>
+        <button class="btn btn-ghost" id="reset-btn">Start over</button>
+      </div>
+    </section>
+
+    <!-- Wizard nav -->
+    <div class="wizard-nav">
+      <button class="btn btn-ghost" id="prev-btn">Back</button>
+      <span class="spacer"></span>
+      <span class="saved-flag" id="saved-flag"></span>
+      <button class="btn btn-primary" id="next-btn">Continue</button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> OpenDataWorld · Fabric — the semantic data fabric</p>
+  </footer>
+
+  <script src="build.js"></script>
+</body>
+</html>
