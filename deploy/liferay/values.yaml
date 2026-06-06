@@ -1,0 +1,139 @@
+# Default values for the Liferay chart.
+# Override with: helm install liferay ./deploy/liferay -f my-values.yaml
+
+replicaCount: 1
+
+image:
+  repository: liferay/portal
+  # NOTE: pin to a real tag for your environment, e.g. "7.4.3.132-ga132".
+  # See https://hub.docker.com/r/liferay/portal/tags
+  tag: "7.4.3.132-ga132"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Liferay listens on 8080 (HTTP) and 8009 (AJP). 11311 is the OSGi Gogo shell.
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: liferay.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+    # - secretName: liferay-tls
+    #   hosts:
+    #     - liferay.example.com
+
+# Persistent storage for the Liferay document library (/opt/liferay/data).
+persistence:
+  enabled: true
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  # Mount path inside the container (Liferay home data dir).
+  mountPath: /opt/liferay/data
+
+# Liferay needs an external database in production. By default it falls back to
+# the embedded HSQL database (demo only — NOT for production). Set enabled: true
+# and fill in the connection to use an external Postgres/MySQL.
+database:
+  external:
+    enabled: false
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/lportal
+    username: liferay
+    # Prefer existingSecret over a plaintext password.
+    password: ""
+    existingSecret: ""
+    existingSecretPasswordKey: password
+
+# Single sign-on hooks. When enabled these are passed to Liferay as portal
+# properties / env so an OIDC provider can be wired in.
+sso:
+  oidc:
+    enabled: false
+    issuerUrl: ""
+    clientId: ""
+    clientSecretSecret: ""        # name of a Secret holding the client secret
+    clientSecretKey: client-secret
+
+# Extra environment variables (Liferay reads LIFERAY_* env as portal props).
+extraEnv: []
+  # - name: LIFERAY_JVM_OPTS
+  #   value: "-Xms2g -Xmx2g"
+
+resources:
+  requests:
+    cpu: "1"
+    memory: 2Gi
+  limits:
+    cpu: "2"
+    memory: 4Gi
+
+# Horizontal Pod Autoscaler.
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80
+
+# Liferay is slow to boot; probes are generous by default.
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  failureThreshold: 40        # ~10 min max boot window
+readinessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+livenessProbe:
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 5
+
+# Zero-downtime rolling updates.
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Prometheus scrape annotations (observability). Liferay exposes metrics via
+# its Micrometer/agent integration when configured; annotations are a no-op
+# until a metrics endpoint is enabled.
+metrics:
+  podAnnotations:
+    prometheus.io/scrape: "false"
+    prometheus.io/port: "8080"
+    prometheus.io/path: /metrics
+
+podAnnotations: {}
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

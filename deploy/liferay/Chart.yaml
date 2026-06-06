@@ -1,0 +1,18 @@
+apiVersion: v2
+name: liferay
+description: A starter Helm chart for running Liferay DXP/Portal on Kubernetes.
+type: application
+# Chart version — bump on chart changes.
+version: 0.1.0
+# The Liferay version this chart deploys by default (overridable via image.tag).
+appVersion: "7.4"
+keywords:
+  - liferay
+  - dxp
+  - portal
+  - cms
+home: https://github.com/opendataworld/fabric
+sources:
+  - https://github.com/opendataworld/fabric
+maintainers:
+  - name: OpenDataWorld
