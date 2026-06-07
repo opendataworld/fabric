@@ -88,17 +88,43 @@ loops**. The Fabric primitives map onto classical control exactly:
 | **Plant + dynamics** | `Order`/`Payment` `State`, advanced by `Event` | `state:order-accepted` → `event:payment-settled` → `state:settled` |
 | **Feedback** | `Event` updates `Metric` → controller re-acts | latency/success feed the next control action |
 
-Three loops run concurrently:
+Four loops run concurrently:
 
 1. **Liquidity / pricing loop** — `agent:discovery` drives `metric:fill-rate`
    toward `objective:liquidity`, bounded by `constraint:price-floor`.
 2. **Fulfillment loop** — `agent:commerce` drives Orders to `fulfilled`.
 3. **Settlement loop** — `agent:settlement` drives Payments to `settled` within
    SLA, with `agent:escrow` holding funds until release conditions clear.
+4. **Trust loop** — `agent:arbiter` drives `metric:dispute-rate` /
+   `metric:seller-rating` toward `objective:trust`, actuating refunds and
+   listing suspensions, bounded by `constraint:reputation-floor`.
 
 The path through each loop is **emergent** (architecture §4): the agent is bounded
 only by Policy/Constraint, never by a prescribed route — it is error-correcting
 control, not a fixed DAG.
+
+## Trust, reputation & disputes (community / c2c / p2p)
+
+Community selling lives or dies on trust, so the marketplace carries an explicit
+trust layer — built entirely from existing primitives, no new node types:
+
+- **`Risk`** — what can go wrong (`non-delivery`, `fraud`, `chargeback`), each
+  `threatens` a transaction and is `mitigatedBy` a Constraint.
+- **`Control`** — an enforced safeguard: `kyc`, `escrow-hold`, and
+  `reputation-gate` each `enforces` a Constraint, `mitigates` a Risk, and is
+  `evidencedBy` Evidence.
+- **`Evidence`** — receipts, KYC attestations, and reviews make trust *auditable
+  rather than asserted* (`derivedFrom` Events, `substantiates` Objectives).
+- **`Metric`** — `seller-rating` and `dispute-rate` are the trust loop's sensors.
+- **Dispute lifecycle** — `disputed → arbitration → resolved / refunded` as
+  States advanced by Events, traced by a **`Journey`** (`journey:dispute`).
+- **`Arbiter` agent** — the trust controller: opens disputes, arbitrates,
+  refunds, and suspends listings, bounded by `policy:dispute-resolution`.
+
+This is what makes c2c and p2p motions safe: a low-reputation seller is gated by
+`constraint:reputation-floor`, escrow holds funds until delivery Evidence
+exists, and every dispute outcome is a governed State change, not a support
+ticket lost in someone's inbox.
 
 ## Why this is safe to sell
 

@@ -256,3 +256,60 @@ fabric:
     - { id: "state:settled",        type: "fabric:primitive:state", name: "Settled" }
     - { id: "event:order-placed",   type: "fabric:primitive:event", name: "Order placed" }
     - { id: "event:payment-settled",type: "fabric:primitive:event", name: "Payment settled" }
+
+    # ════════════════════════ TRUST · REPUTATION · DISPUTE ════════════════════
+    # The layer community / c2c / p2p selling needs — built from existing
+    # primitives (Risk, Control, Evidence, Metric, Journey). It is a FOURTH
+    # closed-loop controller: setpoint objective:trust, sensors the reputation
+    # Metrics, actuator the Arbiter's refund/suspend Capabilities.
+    - { id: "did:fabric:agent:arbiter", type: "fabric:primitive:identity", kind: "agent", displayName: "Arbiter Agent" }
+
+    # — setpoint + sensors —
+    - { id: "objective:trust", type: "fabric:primitive:objective", kind: "outcome", name: "Trust setpoint", statement: "Keep seller rating above floor and dispute rate below threshold; every dispute resolves." }
+    - { id: "metric:seller-rating", type: "fabric:primitive:metric", name: "Seller rating", value: 4.8, unit: "stars", measures: ["objective:trust"] }
+    - { id: "metric:dispute-rate",  type: "fabric:primitive:metric", name: "Dispute rate",  value: 0.0, unit: "ratio", measures: ["objective:trust"] }
+
+    # — controller bound —
+    - { id: "constraint:reputation-floor", type: "fabric:primitive:constraint", kind: "boundary", expression: "seller.rating >= 4.0", severity: "blocking" }
+
+    # — risks the marketplace runs (threaten the transaction) —
+    - { id: "risk:non-delivery", type: "fabric:primitive:risk", category: "operational", statement: "Seller takes payment but never delivers.", likelihood: "possible", impact: "major", severity: "high", threatens: ["order:0001"], mitigatedBy: ["constraint:mandate-required", "constraint:reputation-floor"], governedBy: ["policy:dispute-resolution"], evidencedBy: ["evidence:receipt"] }
+    - { id: "risk:fraud",        type: "fabric:primitive:risk", category: "financial",  statement: "A bad actor lists or buys under a false identity.", likelihood: "unlikely", impact: "severe", severity: "high", threatens: ["marketplace:fabric-community"], mitigatedBy: ["constraint:eligibility"], evidencedBy: ["evidence:kyc-attestation"] }
+    - { id: "risk:chargeback",   type: "fabric:primitive:risk", category: "financial",  statement: "Buyer reverses a settled payment.", likelihood: "possible", impact: "moderate", severity: "medium", threatens: ["payment:0001"], mitigatedBy: ["constraint:mandate-required"] }
+
+    # — evidence (what makes trust auditable, not asserted) —
+    - { id: "evidence:receipt",         type: "fabric:primitive:evidence", kind: "event",       claim: "Delivery occurred and was settled.", source: "did:fabric:agent:settlement", derivedFrom: ["event:payment-settled"], substantiates: ["objective:fulfilled"] }
+    - { id: "evidence:kyc-attestation", type: "fabric:primitive:evidence", kind: "attestation", claim: "Seller identity was verified (KYC).", source: "did:fabric:seller:acme", supports: ["policy:trust-safety"] }
+    - { id: "evidence:review",          type: "fabric:primitive:evidence", kind: "document",    claim: "Buyer rated the seller after fulfillment.", source: "did:fabric:buyer:agent-x", substantiates: ["objective:trust"] }
+
+    # — controls (enforce a constraint, mitigate a risk, proven by evidence) —
+    - { id: "control:kyc",             type: "fabric:primitive:control", name: "KYC verification",  enforces: ["constraint:eligibility"],       mitigates: ["risk:fraud"],        evidencedBy: ["evidence:kyc-attestation"] }
+    - { id: "control:escrow-hold",     type: "fabric:primitive:control", name: "Escrow until delivery", enforces: ["constraint:mandate-required"], mitigates: ["risk:non-delivery"], evidencedBy: ["evidence:receipt"] }
+    - { id: "control:reputation-gate", type: "fabric:primitive:control", name: "Reputation gate",   enforces: ["constraint:reputation-floor"],  mitigates: ["risk:non-delivery"], evidencedBy: ["evidence:review"] }
+
+    # — dispute policy + the Arbiter's actuator capabilities —
+    - { id: "policy:dispute-resolution", type: "fabric:primitive:policy", name: "Dispute Resolution", effect: "require-approval", constraints: ["constraint:reputation-floor", "constraint:mandate-required"] }
+    - { id: "capability:open-dispute",    type: "fabric:primitive:capability", name: "Open Dispute",    verb: "dispute" }
+    - { id: "capability:arbitrate",       type: "fabric:primitive:capability", name: "Arbitrate",       verb: "arbitrate" }
+    - { id: "capability:refund",          type: "fabric:primitive:capability", name: "Refund",          verb: "refund" }
+    - { id: "capability:suspend-listing", type: "fabric:primitive:capability", name: "Suspend Listing", verb: "suspend" }
+    - id: "agent:arbiter"
+      type: "fabric:primitive:agent"
+      name: "Arbiter Agent"
+      executes: ["capability:open-dispute", "capability:arbitrate", "capability:refund", "capability:suspend-listing"]
+      pursues: ["objective:trust"]
+      governedBy: ["policy:dispute-resolution"]
+      guards: ["touchpoint:api"]
+
+    # — dispute lifecycle (States advanced by Events) + the Journey trace —
+    - { id: "state:disputed",    type: "fabric:primitive:state", name: "Disputed",    value: "disputed",    advancedBy: ["event:dispute-opened"] }
+    - { id: "state:arbitration", type: "fabric:primitive:state", name: "Arbitration", value: "arbitration", gatedBy: ["constraint:reputation-floor"] }
+    - { id: "state:resolved",    type: "fabric:primitive:state", name: "Resolved",    value: "resolved",    advancedBy: ["event:dispute-resolved"] }
+    - { id: "state:refunded",    type: "fabric:primitive:state", name: "Refunded",    value: "refunded" }
+    - { id: "event:dispute-opened",   type: "fabric:primitive:event", name: "Dispute opened",   actor: "did:fabric:buyer:agent-x", subject: "order:0001" }
+    - { id: "event:dispute-resolved", type: "fabric:primitive:event", name: "Dispute resolved", actor: "did:fabric:agent:arbiter", subject: "order:0001" }
+    - id: "journey:dispute"
+      type: "fabric:primitive:journey"
+      subject: "order:0001"
+      sequenceOf: ["state:order-accepted", "state:disputed", "state:arbitration", "state:resolved"]
+      forIdentity: ["did:fabric:agent:arbiter"]

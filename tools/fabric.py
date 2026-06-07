@@ -43,6 +43,10 @@ LINK_FIELDS = {
     "settles", "paidBy", "paysTo", "authorizedBy", "draws", "viaProtocol",
     "appliesTo", "addresses", "constrainedBy", "hasState", "measures",
     "servesObjective",
+    # trust / reputation / dispute edges
+    "threatens", "mitigatedBy", "mitigates", "enforces", "evidencedBy",
+    "substantiates", "derivedFrom", "supports", "sequenceOf", "forIdentity",
+    "gatedBy",
 }
 # Asset fields that point at another asset by id (scalar record links).
 REF_FIELDS = {"source", "subject", "controller"}
