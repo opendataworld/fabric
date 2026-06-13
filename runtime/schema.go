@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/ed25519"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -16,6 +17,10 @@ import (
 type API struct {
 	Model *Model
 	Graph *Graph
+	// Keyring holds domain owners' ed25519 private keys, minted by
+	// RegisterDomain. In-memory only (reference runtime; not persisted) — a
+	// KMS/external signer is a later swap behind signFor.
+	Keyring map[string]ed25519.PrivateKey
 }
 
 // jsonScalar carries arbitrary record fields / JSON Schema documents through
@@ -223,6 +228,29 @@ func (a *API) BuildSchema() (graphql.Schema, error) {
 					return a.Graph.Traverse(p.Args["id"].(string), p.Args["depth"].(int), p.Args["dir"].(string)), nil
 				},
 			},
+			"twinDecide": &graphql.Field{
+				Type:        jsonScalar,
+				Description: "Ask a twin what it would decide among options — deterministic, justified by its preferences.",
+				Args: graphql.FieldConfigArgument{
+					"twin":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"options": &graphql.ArgumentConfig{Type: jsonScalar},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return a.TwinDecide(p.Args["twin"].(string), toMapList(p.Args["options"]))
+				},
+			},
+			"verifySignature": &graphql.Field{
+				Type:        graphql.Boolean,
+				Description: "Verify an ed25519 signature (hex) over a payload for a public key (hex).",
+				Args: graphql.FieldConfigArgument{
+					"pubkey":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"payload":   &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"signature": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return VerifySignature(p.Args["pubkey"].(string), []byte(p.Args["payload"].(string)), p.Args["signature"].(string)), nil
+				},
+			},
 		},
 	})
 
@@ -346,6 +374,46 @@ func (a *API) BuildSchema() (graphql.Schema, error) {
 				},
 				Resolve: func(p graphql.ResolveParams) (any, error) {
 					return a.Reject(p.Args["proposal"].(string), toStr(p.Args["rejecter"]))
+				},
+			},
+			"registerDomain": &graphql.Field{
+				Type:        recordType,
+				Description: "Register a governance domain with a platform owner; mints the owner's ed25519 signing key (pubkey on the record).",
+				Args: graphql.FieldConfigArgument{
+					"name":  &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"owner": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					rec, _, err := a.RegisterDomain(p.Args["name"].(string), p.Args["owner"].(string))
+					return rec, err
+				},
+			},
+			"verifyIdentity": &graphql.Field{
+				Type:        recordType,
+				Description: "Record an identity verification (oauth|sso|domain-control|key-challenge).",
+				Args: graphql.FieldConfigArgument{
+					"subject":  &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"method":   &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"evidence": &graphql.ArgumentConfig{Type: graphql.String},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					return a.VerifyIdentity(p.Args["subject"].(string), p.Args["method"].(string), toStr(p.Args["evidence"]))
+				},
+			},
+			"twinPropose": &graphql.Field{
+				Type:        recordType,
+				Description: "Propose a universal Twin (profile aggregate + preference model) of any entity — URAP, NOT committed. Admit via `admit` (domain owner only, signed).",
+				Args: graphql.FieldConfigArgument{
+					"agent":       &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"sourceTable": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"sourceId":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+					"preferences": &graphql.ArgumentConfig{Type: jsonScalar},
+					"domain":      &graphql.ArgumentConfig{Type: graphql.String},
+				},
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					prefs, _ := p.Args["preferences"].(map[string]any)
+					return a.TwinPropose(p.Args["agent"].(string), p.Args["sourceTable"].(string),
+						p.Args["sourceId"].(string), prefs, toStr(p.Args["domain"]))
 				},
 			},
 			"resolverScan": &graphql.Field{

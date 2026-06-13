@@ -65,6 +65,10 @@ func (a *API) Admit(proposalID, admitter string) (*Record, error) {
 	tid, _ := prop.Fields["targetId"].(string)
 	f, _ := prop.Fields["fields"].(map[string]any)
 
+	// eventExtra carries action-specific fields onto the immutable admit Event
+	// (e.g. the ed25519 signature material for a signed twin commitment).
+	eventExtra := map[string]any{}
+
 	// Commit forward: apply the proposed change to reality.
 	switch action {
 	case "resolve.merge":
@@ -81,6 +85,17 @@ func (a *API) Admit(proposalID, admitter string) (*Record, error) {
 				}
 			}
 		}
+	case "twin.build":
+		// Twin governance: only the verified platform owner of the twin's
+		// domain may admit, and the commitment is ed25519-signed.
+		sig, pub, payload, err := a.admitTwin(prop, admitter, tt, tid, f)
+		if err != nil {
+			return nil, err
+		}
+		eventExtra["twin"] = tid
+		eventExtra["signature"] = sig
+		eventExtra["pubkey"] = pub
+		eventExtra["payload"] = payload
 	default:
 		if tt != "" && tid != "" {
 			a.Graph.Put(&Record{Table: tt, ID: tid, Fields: f}, true)
@@ -90,17 +105,17 @@ func (a *API) Admit(proposalID, admitter string) (*Record, error) {
 	}
 
 	eventID := fmt.Sprintf("event:proposal.admitted:%s:%d", shortID(proposalID), time.Now().UnixNano())
-	event := a.Graph.Put(&Record{
-		Table: "event",
-		ID:    eventID,
-		Fields: map[string]any{
-			"type":       "proposal.admitted",
-			"actor":      admitter,
-			"action":     action,
-			"proposal":   proposalID,
-			"occurredAt": now,
-		},
-	}, true)
+	eventFields := map[string]any{
+		"type":       "proposal.admitted",
+		"actor":      admitter,
+		"action":     action,
+		"proposal":   proposalID,
+		"occurredAt": now,
+	}
+	for k, v := range eventExtra {
+		eventFields[k] = v
+	}
+	event := a.Graph.Put(&Record{Table: "event", ID: eventID, Fields: eventFields}, true)
 	prop.Fields["status"] = "admitted"
 	prop.Fields["admittedBy"] = admitter
 	a.Graph.Put(prop, true)

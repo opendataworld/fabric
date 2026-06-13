@@ -61,7 +61,37 @@ func selftest() error {
 		return fmt.Errorf("records query: %v", q.Errors)
 	}
 
-	fmt.Printf("selftest OK: classes=%d nodes=%d edges=%d resolve(identity,2)=%v\n",
+	// Twin layer: register a domain, verify its owner, propose+admit a signed
+	// twin, and confirm the now-edge signature verifies.
+	if _, err := api.RegisterAgent("agent:twinner", "Twinner", []string{"capability"}, nil, nil); err != nil {
+		return fmt.Errorf("register twinner: %w", err)
+	}
+	if _, _, err := api.RegisterDomain("example.com", "identity:owner"); err != nil {
+		return fmt.Errorf("register domain: %w", err)
+	}
+	if _, err := api.VerifyIdentity("identity:owner", "domain-control", "selftest"); err != nil {
+		return fmt.Errorf("verify owner: %w", err)
+	}
+	api.Graph.Put(&Record{Table: "identity", ID: "identity:twinme", Fields: map[string]any{"email": "twinme@example.com"}}, false)
+	tp, err := api.TwinPropose("agent:twinner", "identity", "identity:twinme", map[string]any{"trust": 1.0}, "")
+	if err != nil {
+		return fmt.Errorf("twin propose: %w", err)
+	}
+	if api.Graph.Get("twin:identity:identity:twinme") != nil {
+		return fmt.Errorf("twin propose must not commit (URAP)")
+	}
+	ev, err := api.Admit(tp.ID, "identity:owner")
+	if err != nil {
+		return fmt.Errorf("twin admit: %w", err)
+	}
+	pub, _ := ev.Fields["pubkey"].(string)
+	sig, _ := ev.Fields["signature"].(string)
+	payload, _ := ev.Fields["payload"].(string)
+	if !VerifySignature(pub, []byte(payload), sig) {
+		return fmt.Errorf("twin admit signature failed to verify")
+	}
+
+	fmt.Printf("selftest OK: classes=%d nodes=%d edges=%d resolve(identity,2)=%v twin=signed\n",
 		len(model.Classes), len(model.Nodes), len(model.Edges), res.Resolved)
 	return nil
 }

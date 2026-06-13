@@ -98,7 +98,9 @@ go run . --mcp        # serve MCP on stdio (stdout = protocol, stderr = logs)
 Tools: `fabric_classes`, `fabric_resolve`, `fabric_graph`, `fabric_records`,
 `fabric_get_record`, `fabric_traverse`, `fabric_create_record`, `fabric_relate`,
 `fabric_register_agent`, `fabric_agent_act`, `fabric_propose`, `fabric_admit`,
-`fabric_reject`, `fabric_resolver_scan`, `fabric_signup`.
+`fabric_reject`, `fabric_resolver_scan`, `fabric_register_domain`,
+`fabric_verify_identity`, `fabric_twin_propose`, `fabric_twin_decide`,
+`fabric_verify_signature`, `fabric_signup`.
 
 ### URAP propose → admit (the agent never commits)
 
@@ -121,6 +123,47 @@ as memory (`hasMemory`). `registerAgent` wires those governance edges;
 context — so an agent operating the fabric is itself a governed, auditable node
 in the same graph.
 
+### Twin — universal, domain-governed, signed digital twins
+
+A **Twin** is a passive, universal mirror of *any* entity (a person, org,
+dataset, capability — any record): a **profile aggregate** (the connected
+subgraph around its source) plus a deterministic **preference model** that
+answers *"what would this entity decide?"* with a justification. A twin never
+acts on its own — it is built through the same URAP propose→admit flow, with two
+added guarantees:
+
+- **Domain governance.** Every twin belongs to a **domain** (e.g. `acme.com`,
+  derived from an identity's email or set explicitly). Each domain has a
+  **platform owner** and an ed25519 public key (`registerDomain` mints the
+  keypair). Only the domain's owner may **admit** a twin proposal.
+- **Identity verification + signing.** Both the entity twinned and the admitting
+  owner must be **identity-verified** (`verifyIdentity`). The owner's admission
+  is **ed25519-signed**: the admit Event stores the signature, public key, and
+  signed payload, so anyone can `verifySignature` that the twin state was
+  admitted by that owner and not tampered with.
+
+```graphql
+mutation {
+  registerDomain(name: "acme.com", owner: "identity:ada") { id fields }  # pubkey on the record
+  verifyIdentity(subject: "identity:ada", method: "domain-control") { id }
+  # propose a twin of any entity — recorded, NOT committed
+  twinPropose(agent: "agent:twinner", sourceTable: "identity", sourceId: "identity:bob",
+    preferences: { sustainability: 2, price: -1 }) { id }
+}
+# admit as the domain owner (the only path that commits — and it signs):
+mutation { admit(proposal: "proposal:...", admitter: "identity:ada") { fields } }
+# ask the twin what it would decide, and verify the now-edge signature:
+{
+  twinDecide(twin: "twin:identity:identity:bob",
+    options: [{ id: "green", attrs: { sustainability: 5, price: 3 } },
+              { id: "cheap", attrs: { sustainability: 1, price: 1 } }])
+  verifySignature(pubkey: "...", payload: "...", signature: "...")
+}
+```
+
+Domain owner keys are held **in-memory** in this reference runtime (not
+persisted); a KMS/external signer is a later swap behind `signFor`.
+
 Register it with Claude Code, for example:
 
 ```sh
@@ -137,6 +180,10 @@ claude mcp add fabric -- go run /path/to/fabric/runtime --mcp
 | `schema.go` | GraphQL schema, resolvers, and the `signup` domain flow |
 | `agent.go`  | agent-native layer: register agents, record governed actions |
 | `resolver.go` | URAP propose→admit + the deterministic Resolver agent (dedup→canonical) |
+| `domain.go` | governance domains: owner + minted ed25519 key; domain-of derivation |
+| `verify.go` | identity verification records that gate twinning and admission |
+| `twin.go`   | universal Twin: profile aggregate + deterministic preference model |
+| `sign.go`   | ed25519 signing of the now-edge + signature verification |
 | `mcp.go`    | Model Context Protocol server (stdio) — the fabric as agent tools |
 | `server.go` | HTTP `/graphql` endpoint + embedded explorer |
 | `main.go`   | wiring, config, lifecycle (`--mcp`, `--selftest`) |

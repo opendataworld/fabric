@@ -204,6 +204,58 @@ func NewMCPServer(a *API) *MCPServer {
 			},
 		},
 		{
+			Name:        "fabric_register_domain",
+			Description: "Register a governance domain with a platform owner; mints the owner's ed25519 signing key. Returns the domain record and the owner's public key.",
+			InputSchema: obj(map[string]any{"name": str("domain name, e.g. acme.com"), "owner": str("owner identity id")}, "name", "owner"),
+			handler: func(args map[string]any) (any, error) {
+				rec, pub, err := a.RegisterDomain(argStr(args, "name"), argStr(args, "owner"))
+				if err != nil {
+					return nil, err
+				}
+				return map[string]any{"domain": rec, "pubkey": pub}, nil
+			},
+		},
+		{
+			Name:        "fabric_verify_identity",
+			Description: "Record an identity verification (oauth|sso|domain-control|key-challenge) — gates twinning and twin admission.",
+			InputSchema: obj(map[string]any{"subject": str("identity id"), "method": str("oauth|sso|domain-control|key-challenge"), "evidence": str("optional evidence")}, "subject", "method"),
+			handler: func(args map[string]any) (any, error) {
+				return a.VerifyIdentity(argStr(args, "subject"), argStr(args, "method"), argStr(args, "evidence"))
+			},
+		},
+		{
+			Name:        "fabric_twin_propose",
+			Description: "Propose a universal Twin (profile aggregate + preference model) of ANY entity — URAP, NOT committed. Admit via fabric_admit (domain owner only, signed).",
+			InputSchema: obj(map[string]any{
+				"agent": str("proposing agent id"), "sourceTable": str("source record table"), "sourceId": str("source record id"),
+				"preferences": map[string]any{"type": "object", "description": "preference weights, e.g. {\"sustainability\":2,\"price\":-1}"},
+				"domain":      str("governing domain (optional; derived from the source if omitted)"),
+			}, "agent", "sourceTable", "sourceId"),
+			handler: func(args map[string]any) (any, error) {
+				prefs, _ := args["preferences"].(map[string]any)
+				return a.TwinPropose(argStr(args, "agent"), argStr(args, "sourceTable"), argStr(args, "sourceId"), prefs, argStr(args, "domain"))
+			},
+		},
+		{
+			Name:        "fabric_twin_decide",
+			Description: "Ask a twin what it would decide among options — deterministic, justified by its preferences.",
+			InputSchema: obj(map[string]any{
+				"twin":    str("twin id"),
+				"options": map[string]any{"type": "array", "items": map[string]any{"type": "object"}, "description": "options, each {id, attrs:{...}}"},
+			}, "twin", "options"),
+			handler: func(args map[string]any) (any, error) {
+				return a.TwinDecide(argStr(args, "twin"), toMapList(args["options"]))
+			},
+		},
+		{
+			Name:        "fabric_verify_signature",
+			Description: "Verify an ed25519 signature (hex) over a payload for a public key (hex).",
+			InputSchema: obj(map[string]any{"pubkey": str("public key hex"), "payload": str("signed payload"), "signature": str("signature hex")}, "pubkey", "payload", "signature"),
+			handler: func(args map[string]any) (any, error) {
+				return VerifySignature(argStr(args, "pubkey"), []byte(argStr(args, "payload")), argStr(args, "signature")), nil
+			},
+		},
+		{
 			Name:        "fabric_signup",
 			Description: "Register a person as an Identity record (+ audit Event).",
 			InputSchema: obj(map[string]any{"name": str("full name"), "email": str("email"), "company": str("optional"), "message": str("optional use case")}, "name", "email"),
